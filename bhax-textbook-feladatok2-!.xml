@@ -1,0 +1,256 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Helló,!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>FUTURE tevékenység editor </title>
+		<para>Megoldás forrása:</para>
+		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+        <para>A feladat az volt, hogy a FUTURE Activity Editorban keressünk bugokat és javítsuk őket
+            ki. Az ActivityEditor futtatásánál fontos megemlíteni, hogy csak Java 8 felett nem fut,
+            és olyan verzió kell, ami tartalmazza a JavaFX -et. Több verziót is megpróbáltam a
+            8.0.202-zulufx-el futott hiba nélkül. </para>
+        <para>Ezt a verziót könnyedén telepíthetjük sdkman segítségével: </para>
+        <para>
+            <programlisting>sdk install java 8.0.202-zulufx
+sdk use java 8.0.202-zulufx</programlisting>
+        </para>
+        <para>A bug, amit találtam az volt, hogy ha egy tevékenységben létrehozunk egy újt
+            altevékenyésget,akkor azután már nem lehetett másikat létrehozni. Ennek az az oka, hogy
+            ilyenkor könyvtárszerkezetet hozunk létre, és két ugyanolyan nevű mappa keletkezne. </para>
+        <figure>
+            <title>A bug</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/futurebug.png"/>
+                </imageobject>
+            </mediaobject>
+            <para>Ezt a következőképpen javítjuk ki a kódban: Deklarálunk egy i ciklusváltozót, és
+                egy végtelen while ciklusba tesszük az Új altevékenység létrehozásának
+                programrészét.Létrehouunk a könyvtárban egy Új Altevékenységed a nevében a while
+                aktuális indexével.  Az if részben azt nézzük meg létezik-e a könyvtárban már, az
+                altevékenység amit készülünk létrehozni, ha nem break-e megállítjuk a ciklust,
+                minden további nélkül létrehozhatjuk az új Altevékenységet. Ha már van ilyen nevű
+                mappa, akkor növelnünk kell a tevékenység indexét tehát a ciklusváltozót. Majd
+                kiírjuk hogy nem sikerült létrehozni a fájlt és újat próbálunk létrehozni. Ezt
+                követően a while ismét lefut növelt i-vel. A működés hátránya lehet hogy ahány
+                altevékenység létezik már alapból,annyiszor fog lefutni a while, amíg újat tud
+                létrehozni.
+                <programlisting>
+            int i=1;
+            while(true){
+                java.io.File f = new java.io.File(file.getPath() + System.getProperty("file.separator") + "Új altevékenység"+i);
+
+                if (f.mkdir()) {
+                    javafx.scene.control.TreeItem&lt;java.io.File> newAct
+ //                           = new javafx.scene.control.TreeItem&lt;java.io.File>(f, new javafx.scene.image.ImageView(actIcon));
+                           = new FileTreeItem(f, new javafx.scene.image.ImageView(actIcon));                            
+                    getTreeItem().getChildren().add(newAct);
+                    break;
+                } else {
+                    ++i;
+                    System.out.println("Can't create file,trying to create "+" Új altevékenység"+i+" instead"+" path: "+f.getPath());
+                }
+                }
+            });</programlisting></para>
+        </figure>
+        <figure>
+            <title>Bug javítva</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/future_fixed.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>        
+
+
+
+
+	<section>
+	<title>SamuCam</title>
+	<para>Megoldás forrása: </para>
+		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+        <para>A feladat az volt, hogy mutasszuk be a webkamera kezelését a programnak. </para>
+        <para>A <emphasis role="bold">main.cpp</emphasis>-ben, itt a webcamipOption parancssori
+            argumentumként lesz megadva, ennek kelle tartalmaznia a webcam IP-jét, erre akkor van
+            szükség, ha androidos telefon használunk. Ha nem adjuk meg az argumentumot akkor, az
+            alapéréték kerül megadásra.
+            <programlisting>std::string videoStream = parser.value ( webcamipOption ).toStdString();
+SamuLife samulife ( videoStream, 176, 144 ); //( 34, 16 );</programlisting></para>
+        <para>A további kódcsipetek, mind a<emphasis role="bold"> SamuCam.cpp</emphasis>-ben
+            találhatóak. Ebben a részletben láthatjuk, hogy a SamuCam konstruktor tartalmaz egy
+            openVideoStream() függvényt, amit rögtön utána ki is fejtünk. A videoCaptureOpen(0)
+            függvénnyel nyitjuk meg a streamet, itt a paramétert átírtam 0-ra mivel így
+            automatikusan a webcamot fogja megnyitni. A .set függvényekkel beállítjuk a videó
+            magasságát, szélességét illetve az FPS-t.  </para>
+        <para>
+            <programlisting>SamuCam::SamuCam ( std::string videoStream, int width = 176, int height = 144 )
+  : videoStream ( videoStream ), width ( width ), height ( height )
+{
+  openVideoStream();
+}
+
+SamuCam::~SamuCam ()
+{
+}
+
+void SamuCam::openVideoStream()
+{
+  videoCapture.open (0);
+
+  videoCapture.set ( CV_CAP_PROP_FRAME_WIDTH, width );
+  videoCapture.set ( CV_CAP_PROP_FRAME_HEIGHT, height );
+  videoCapture.set ( CV_CAP_PROP_FPS, 10 );
+}</programlisting>
+        </para>
+        <para>Ebben a részben példányosítunk egy CascadeClassifier objektumot. A kaszkádolás a gépi
+            tanulásnak egy fajtája, ahol a Classifier outputjából tanul a gép elmenti az infót, és a
+            következő Classifiernél ezt felhasználja. Ebben az esetben emberi arcot ír le a
+            classifier, ehhez töltjük le futtatás előtt a <link
+                xlink:href="https://github.com/Itseez/opencv/raw/master/data/lbpcascades/lbpcascade_frontalface.xml"
+            />oldalról az xml-t. Ezt egy load függvénnyel töltjük be, ha nem találja a program debug
+            üzenetet dob. </para>
+        <programlisting>  cv::CascadeClassifier faceClassifier;
+
+  std::string faceXML = "lbpcascade_frontalface.xml"; // https://github.com/Itseez/opencv/tree/master/data/lbpcascades
+
+  if ( !faceClassifier.load ( faceXML ) )
+    {
+      qDebug() &lt;&lt; "error: cannot found" &lt;&lt; faceXML.c_str();
+      return;
+    }</programlisting>
+        <para>Egy while függvényt használunk, amiben a read függvénnyel fogujuk ovlasni a bemenetet,
+            a programrész végén található msleep(80) függvénnyel 80 millisecet késleltetjük a
+            while-t így ilyen időközönként fogjuk olvasni a bemenetet. Ezt a frame tömbbe fogjuk
+            tárolni, ami egy többdimenziós tömb. Ha látjuk, hogy van bemenet tehát a frame tömb nem
+            üres akkor, ezt a resize függvénnyel átméretezzük és az INTER_CUBIC függvénnyel
+            interpoláljuk. </para>
+        <para>Létrehozunk egy faces vektort és grayFrame tömböt. A cvtColor függvénnyel a frame
+            függvényt átálítjuk szürkeárnyalatosra és, ez a verzió a grayFrame tömbben lesz tárolva.
+            Ennek a tömbnek az equalizeHist függvénnyel fogjuk megnövelni a kontrasztját.  Ezt
+            követően használjuk a faceClassifier-t a detectMultiScale függvény a bemeneten keres
+            különböző méretű objektumokat, jelen esetben arcokat. Ha talál arcot létrehoz egy
+            QImage-et majd emit-et küld egy faceChanged signalt a SamuBrain osztálynak küldünk
+            tovább. Az arcra készítünk egy keretet a rectangle függvénnyel és küldünk signalt
+            SamuLife rész számára.  </para>
+        <programlisting> while ( videoCapture.read ( frame ) )
+        {
+
+          if ( !frame.empty() )
+            {
+
+              cv::resize ( frame, frame, cv::Size ( 176, 144 ), 0, 0, cv::INTER_CUBIC );
+
+              std::vector&lt;cv::Rect> faces;
+              cv::Mat grayFrame;
+
+              cv::cvtColor ( frame, grayFrame, cv::COLOR_BGR2GRAY );
+              cv::equalizeHist ( grayFrame, grayFrame );
+
+              faceClassifier.detectMultiScale ( grayFrame, faces, 1.1, 3, 0, cv::Size ( 60, 60 ) );
+
+              if ( faces.size() > 0 )
+                {
+
+                  cv::Mat onlyFace = frame ( faces[0] ).clone();
+
+                  QImage* face = new QImage ( onlyFace.data,
+                                              onlyFace.cols,
+                                              onlyFace.rows,
+                                              onlyFace.step,
+                                              QImage::Format_RGB888 );
+
+                  cv::Point x ( faces[0].x-1, faces[0].y-1 );
+                  cv::Point y ( faces[0].x + faces[0].width+2, faces[0].y + faces[0].height+2 );
+                  cv::rectangle ( frame, x, y, cv::Scalar ( 240, 230, 200 ) );
+
+
+                  emit  faceChanged ( face );
+                }
+
+              QImage*  webcam = new QImage ( frame.data,
+                                             frame.cols,
+                                             frame.rows,
+                                             frame.step,
+                                             QImage::Format_RGB888 );
+
+              emit  webcamChanged ( webcam );
+
+            }
+
+          QThread::msleep ( 80 );
+
+        }</programlisting>
+        <para>A programot sikeresen futtattam, de sajnos a virtuális gépen nem sikerült működésre
+            bírni a webkamerát ezért nem sikerült kipróbálni. </para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/samu.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+	</section>  
+
+	<section>
+	<title>BrainB Slot-signal mechanizmus </title>
+        <para> Megoldás forrása:  </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>
+        <para><emphasis role="bold">Slot-signal mechanizmus általánosan:</emphasis></para>
+        <para>A QT slot-signal mechanizmus az objektumok közötti kommunikációt teszi lehet. Más GUI
+            rendszerekben az objektumok közötii kommunikáció úgynevezett callback-ekkel történik,
+            ami függvénypointerek által műkdödik. </para>
+        <para>A QT-ban bevezették az Signal-slot mechanizmust, a callback-ek alternatívájára. A slot
+            egy függvény, ami akkor hívódik meg ha kap signalt. A callback-ekhez képest nagy
+            előnyük, hogy típus biztonságosak. A signal és slot típusának meg kell egyeznie, ha nem
+            így van a jelez a fordító. Viszont akármennyi paraméterük lehet és akármilyen típusúak
+            lehetnek. Ha a singal-hoz kapcsolt objektum állapota megváltozik, akkor lefut a kapcsolt
+            slot, ha több akkor ezek egymás után futnak le.  </para>
+        <para><emphasis role="bold">BrainB példák: </emphasis></para>
+        <para>A <emphasis role="bold">BrainWin</emphasis>.cpp-ben ezt a mechaniztmust használjuk a
+            Hero-k frissítésére, ileltve a Statok lekérésére. Láthatjuk hogy a Signal tartalmazza a
+            heroesChanged függvényt, ami ha végbemegy meghívdódik a kapcsolt Slot ami pedig az
+            updateHeroes függvényt tartalmazza. </para>
+        <programlisting>        connect ( brainBThread, SIGNAL ( heroesChanged ( QImage, int, int ) ),
+                  this, SLOT ( updateHeroes ( QImage, int, int ) ) );
+
+        connect ( brainBThread, SIGNAL ( endAndStats ( int ) ),
+                  this, SLOT ( endAndStats ( int ) ) );
+</programlisting>
+        <para>Ugyanez az endAndStats függvény esetén, ami akkor fut le ha a <emphasis role="bold"
+                >BrainThread.cpp</emphasis> fájlban a run() függvényben a lejár a futási idő. Maga
+            az endAndStats függvény a játék végeztével kiírja debug üzenetként, hogy, milyen
+            könyvtárban található az eredményünkről szóló txt. </para>
+        <para>Maga az endAndStats függvény a <emphasis role="bold">BrainWin.cpp-ben</emphasis> a
+            játék végeztével kiírja debug üzenetként, hogy, milyen könyvtárban található az
+            eredményünkről szóló
+            txt.<programlisting>void BrainBWin::endAndStats ( const int &amp;t )
+{
+
+        qDebug()  &lt;&lt; "\n\n\n";
+        qDebug()  &lt;&lt; "Thank you for using " + appName;
+        qDebug()  &lt;&lt; "The result can be found in the directory " + statDir;
+        qDebug()  &lt;&lt; "\n\n\n";
+
+        save ( t );
+        close();
+}</programlisting></para>
+        <figure>
+            <title>Felélesztve</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/BrainBdone.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+	</section>       
+        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</chapter>                

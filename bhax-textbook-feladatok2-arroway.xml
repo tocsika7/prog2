@@ -1,0 +1,405 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Helló, Arroway!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>OO szemlélet</title>
+		<para>A módosított polártranszformációs normális generátor beprogramozása Java nyelven.
+			Mutassunk rá, hogy a mi természetes saját megoldásunk (az algoritmus egyszerre két
+			normálist állít elő, kell egy példánytag, amely a nem visszaadottat tárolja és egy
+			logikai tag, hogy van e tárolt vagy futtatni kell az algot.) és az OpenJDK, Oracle JDK
+			ban a Sun által adott OO szervezés ua.! </para>
+    	<para><link xlink:href="https://arato.inf.unideb.hu/batfai.norbert/UDPROG/deprecated/Prog1_5.pdf">https://arato.inf.unideb.hu/batfai.norbert/UDPROG/deprecated/Prog1_5.pdf</link></para>
+		<para>(16 22 fólia)</para>
+		<para>Ugyanezt írjuk meg C++ nyelven is! (lásd még UDPROG repó:
+			source/labor/polargen)</para>
+        <para><emphasis role="bold"> Megoldás forrása: </emphasis></para>
+    	<para>
+    		Java: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator.java">https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator.java</link>  
+    	</para>
+    	<para>
+    		C++: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator_C++">https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator_C++ </link>
+    	</para>
+        <para>
+			<emphasis role="bold">Tanulságok, tapasztalatok, magyarázat... </emphasis></para>
+		<para>A polártranszformációs algoritmus fontos jellemzője, hogy egy számítási lépéssel két
+			normális eloszlású számot állít elő. Ez azért jó, mert minden páratlanadik meghívásnál
+			nem kell újraszámolnunk, csak visszaadni az előző lépés másik számát. </para>
+		<para><emphasis role="bold">Java megoldás: </emphasis></para>
+		<para>Az egész programot Java-nak megfelelően egy PolarGenerator osztályba írjuk. Ennek tagjai a
+			nincsTarolt és tarolt változók, amik az tartalmazzák hogy van-e tárolt szám, és ha van
+			mi az. Tartalmaz egy konstruktort, amiben igazra állítjuk, hogy kezdésnek nincsen tárolt
+			szám.
+			<programlisting>public class PolarGenerator {
+
+	boolean nincsTarolt = true; 
+	double tarolt;
+
+	public PolarGenerator() {
+		nincsTarolt = true;
+	}</programlisting></para>
+    	<para> Maga a matematikai rész a kovetkezo() metódusban zajlik. Ha nincs nincs tárolt
+			szám,akkor lezajlik a szám generálás, a második érték bekerül a tarolt változóba és
+			nincsTarolt változó hamisra vált, az első értéket pedig kapjuk visszatérési értékként.
+			Ha van tárolt szám akkor a nincsTarolt-at negáljuk és a metódus visszaadja a tárolt
+			számot, és nem generálunk új számot. A main-ben példányosítunk egy PolarGenerator
+			objektumot, majd egy for ciklusban használjuk a kovetkezo() metódust a számok
+			generálására. </para>
+		<programlisting>	public double kovetkezo(){
+		if(nincsTarolt){
+			double u1,u2,v1,v2,w;
+			do{
+				u1 = Math.random();
+				u2 = Math.random();
+				v1 = 2 * u1 - 1;
+				v2 = 2 * u2 -1;
+				w = v1 * v1 + v2 * v2;
+			}while(w>1);
+			double r = Math.sqrt((-2 * Math.log(w))/w);
+			tarolt = r* v2;
+			nincsTarolt = !nincsTarolt;
+			return r * v1;
+			}
+			else{
+				nincsTarolt = !nincsTarolt;
+				return tarolt;
+			}
+		}
+		public static void main(String[] args){
+			PolarGenerator g = new PolarGenerator();
+			for(int i =0;i&lt;10;++i){
+				System.out.println(g.kovetkezo());
+			}
+		}
+	}</programlisting>
+		<para><inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="Images/polar2.png"/>
+				</imageobject>
+			</inlinemediaobject></para>
+    	<para><emphasis role="bold"> C++ megoldás: </emphasis></para>
+		<para>A C++ verzióban a PolarGen osztályt header fájlba írjuk. Az osztály public részében
+			tartalmaz egy konstruktort ami beállítja, hogy nincs tárolt változó kezdésnek, illetve
+			meghívja a srand() függvényt amire a matematikai algoritmus során lesz szükség, random
+			szám generáláshoz. Tartalmaz egy destruktort illetve, deklarálja a kovetkezo()
+			függvényt. A számtároláshoz szükséges változókat az osztály private részébe írjuk, mert
+			nincs szükség rá, hogy közvetlenül el legyenek érve, elég csak a kovetkezo() függvényen
+			keresztül. </para>
+		<programlisting>#ifndef POLARGEN__H
+#define POLARGEN__H
+
+#include &lt;cstdlib>
+#include &lt;cmath>
+#include &lt;ctime>
+
+class PolarGen
+{
+public:
+	PolarGen ()
+	{
+		nincsTarolt=true;
+		std::srand(std::time(NULL));
+	}
+	~PolarGen()
+	{
+	}
+	double kovetkezo();
+
+private:
+	bool nincsTarolt;
+	double tarolt;
+};
+
+#endif</programlisting>
+    	<para> A .cpp fájlban kifejtjük bővebben a kovezkezo() függvényt. Használnunk kell a ::
+			operátort mert,ez egy PolarGen osztályon belüli függvény. Maga a kovetkezo() függvény
+			ugyanúgy működik, mint a Java verzióban, csak C++-os függvéyekkel. A main-ben szintén
+			csak példányosítunk és meghívjuk a kovezkezo() függvényt egy for ciklusban.
+			<programlisting>
+#include "polargen.h"
+#include &lt;iostream>
+
+
+
+
+double PolarGen::kovetkezo()
+{
+	if(nincsTarolt){
+		double u1,u2,v1,v2,w;
+		do{
+			u1 = std::rand()/(RAND_MAX + 1.0);
+			u2 = std::rand()/(RAND_MAX + 1.0);
+			v1 = 2*u1 -1;
+			v2 = 2*u2 -1;
+			w = v1 * v1 + v2 *v2;
+		}
+		while(w>1);
+
+		double r = std::sqrt ((-2 * std::log(w))/w);
+
+		tarolt = r*v2;
+		nincsTarolt = !nincsTarolt;
+
+		return r * v1;
+	}
+	else{
+		nincsTarolt = !nincsTarolt;
+		return tarolt;
+	}
+}
+
+int main(int argc,char **argv)
+{
+	PolarGen pg;
+
+	for(int i=0;i&lt;10;++i)
+		std::cout&lt;&lt;pg.kovetkezo()&lt;&lt;std::endl;
+	
+
+	return 0;
+}</programlisting></para>
+		<informalfigure>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/polar_cpp.png"/>
+				</imageobject>
+			</mediaobject>
+		</informalfigure>
+    </section>        
+
+
+
+
+	<section>
+	<title>"Gagyi"</title>
+	<para>Megoldás forrása:<link
+					xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Gagyi"
+					>https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Gagyi</link>
+		</para>
+		<para> Program, ami lefagy: </para>
+		<programlisting>
+public class Gagyi2
+{
+	public static void main (String[]args)
+{
+	Integer x = -129;
+	Integer t = -129;
+	System.out.println (x);
+	System.out.println (t);
+	while (x &lt;= t &amp;&amp; x >= t &amp;&amp; t != x);
+}
+}			</programlisting>
+		<informalfigure>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/129.png"/>
+				</imageobject>
+			</mediaobject>
+		</informalfigure>
+		<para>Program, ami nem fagy le:<programlisting>
+public class Gagyi3
+{
+	public static void main (String[]args)
+{
+	Integer x = -128;
+	Integer t = -128;
+	System.out.println (x);
+	System.out.println (t);
+	while (x &lt;= t &amp;&amp; x >= t &amp;&amp; t != x);
+}
+</programlisting><inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="Images/128.png"/>
+				</imageobject>
+			</inlinemediaobject></para>
+		<para>Ha egy Integer változónak értéket adunk, akkor a public static Integer valueOf(int i)
+			metódus szerint kap értéket. Ami annyit tesz, hogy ha -128 és 127 közötti értéket adunk,
+			akkor nem példányosít új objektumot, hanem vannak az Integer cache-ben nekik előre
+			elkészített objektumok. A második esetben azért teljesül a feltétel mert a két érték
+			ugyanazt az Integer cache-ből kiszedett előre legyártott objektumot használja. A első
+			programban pedig azért nem, mert a a -129 nincs benne az cache-ben előre legyártott
+			objektumok skálájában, ézért két új objektumot kapunk a két változónak. Ezek a
+			memóriában máshol helyezkednek el, így az összehasonlításuknál nem kapunk egyezést. </para>
+		<figure>
+			<title>JDK forrás</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/jdkint.png"/>
+				</imageobject>
+			</mediaobject>
+		</figure>
+	</section>  
+
+	<section>
+	<title>Yoda</title>
+        <para>
+            Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Yoda.java">https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Yoda.java</link>           
+        </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>
+	<para>
+	A Yoda feltétel a programozásban azt jelenti, hogy a feltétles utasítás kifejezéseit megcseréljük,ezéltal fordítva "beszélünk", mint Yoda a Star Wars-ból. 
+	A kifejezés konstans értéke kerül a feltétel bal oldalára.  
+	</para>
+	<para>
+	Az ilyen típusú utasítással elkerülhetünk például bizonyos NullPointer hibákat. 
+	</para>
+	<para> Az alábbi program a szokásos if utasítás sorrendet használva NullPointer hibát ad. Ez azért
+			van mert, az objektum amit hasonlítani akarunk nem az equals() metódussal az nem lehet
+			null referencia</para>
+	<programlisting>
+	public class Yoda{
+		public static void main(String[] args) {
+			String myString = null;
+			if(myString.equals("foobar")){}
+		}
+	}
+	</programlisting>
+		<informalfigure>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/yoda_badd.png"/>
+				</imageobject>
+			</mediaobject>
+		</informalfigure>
+	<para> Yoda feltételt használva viszont nem kapunk hibát, mert az equals() metódus kaphat null
+			referenciát értékként. </para>
+	<programlisting>
+	public class Yoda{
+		public static void main(String[] args) {
+			String myString = null;
+			if("foobar".equals(myString)){}
+		}	
+	}
+	</programlisting>
+		<informalfigure>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/yoda_good.png"/>
+				</imageobject>
+			</mediaobject>
+		</informalfigure>
+		<figure>
+			<title>JDK forrás:</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/jdkeq.png"/>
+				</imageobject>
+			</mediaobject>
+		</figure>
+	</section>       
+
+	<section>
+	<title>Kódolás from scratch</title>
+	<para>Megoldás forrása:
+		<link xlink:href="https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/apbs02.html#pi_jegyei">https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/apbs02.html#pi_jegyei</link>		
+	</para>
+		<para>Tanulások, tapasztalatok, magyarázat...</para>
+		<para>A Bailey-Borwein-Plouffe (BBP) algoritmus a Pi hexadecimális értékeinek kiszámolására
+			alkalmazható, anékül, hogy ismernénk az előző számjegyeket. </para>
+		<figure>
+			<title>A formula (forrás: https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula)</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/bbp.png" format="png"/>
+				</imageobject>
+			</mediaobject>
+			<para>A programban változókat hozunk létre a tört elemekkel való számolásra. Ezeknek az
+				értékét a d16Sj() metódus adja. Ezt követően kiszámoljuk az adott Pi értéket és a
+				StrictMath.floor() metódust használjuk kerekítésre. </para>
+			<programlisting>public class PiBBP {
+  
+    String d16PiHexaJegyek;
+    public PiBBP(int d) {
+        
+        double d16Pi = 0.0d;
+	 double d16S1t = d16Sj(d, 1);
+        double d16S4t = d16Sj(d, 4);
+        double d16S5t = d16Sj(d, 5);
+        double d16S6t = d16Sj(d, 6);
+        
+        d16Pi = 4.0d*d16S1t - 2.0d*d16S4t - d16S5t - d16S6t;	
+
+        d16Pi = d16Pi - StrictMath.floor(d16Pi);</programlisting>
+		</figure>
+		<para>Készítünk egy buffert és a hexajegyeket tartalmazó tömböt. Hozzáfűzzuk az új jegyeket
+			a meglévő Pi értékhez az append() metódussal és a bufferből stringet csinálunk a
+			toString() metódussal.
+			<programlisting>	StringBuffer sb = new StringBuffer();
+        	
+       Character hexaJegyek[] = {'A', 'B', 'C', 'D', 'E', 'F'};
+        while(d16Pi != 0.0d) {
+            
+            int jegy = (int)StrictMath.floor(16.0d*d16Pi);
+     
+            if(jegy&lt;10)
+                sb.append(jegy);
+            else
+                sb.append(hexaJegyek[jegy-10]);
+            
+            d16Pi = (16.0d*d16Pi) - StrictMath.floor(16.0d*d16Pi);
+        }
+	
+        d16PiHexaJegyek = sb.toString();
+        </programlisting></para>
+		<para>Metódusok elkészítése a tört értékek kiszmálására és bináris hatványozásra.
+			<programlisting> public double d16Sj(int d, int j) {
+        
+        double d16Sj = 0.0d;
+        
+        for(int k=0; k&lt;=d; ++k)
+            d16Sj += (double)n16modk(d-k, 8*k + j) / (double)(8*k + j);
+        
+        return d16Sj - StrictMath.floor(d16Sj);
+    }
+    public long n16modk(int n, int k) {
+        
+        int t = 1;
+        while(t &lt;= n)
+            t *= 2;
+        
+        long r = 1;
+        
+        while(true) {
+            
+            if(n >= t) {
+                r = (16*r) % k;
+                n = n - t;
+            }
+            
+            t = t/2;
+            
+            if(t &lt; 1)
+                break;
+            
+            r = (r*r) % k;
+            
+        }
+        
+        return r;
+    }</programlisting></para>
+		<para>Visszaadjuk a kiszámolt hexajegyeket majd a main-ben példányosítunk egy objektumot.
+			<programlisting>   public String toString() {
+        
+        return d16PiHexaJegyek;
+    }
+    public static void main(String args[]) {        
+        System.out.print(new PiBBP(1000000));
+    }
+}</programlisting></para>
+		<informalfigure>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="Images/pibbp.png"/>
+				</imageobject>
+			</mediaobject>
+		</informalfigure>
+	</section>       
+        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</chapter>                

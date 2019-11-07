@@ -1,0 +1,723 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+
+        <title>Helló, Liskov!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>Liskov helyettesítés sértése</title>
+		
+        <para><emphasis role="bold"> Megoldás forrása: </emphasis></para>
+        <para><emphasis role="bold">Tanulások, tapasztalok, magyarázat...</emphasis></para>
+        <para>A Liskov elv szerint az objektumorientált programozási nyelvekben, ha T-nek egy
+            altípusa S, akkor amelyik programrészben a T-t használjuk probléma nélkül
+            behelyettesíthetjük az S-t is. A probléma a tulajdonságoknál léphet fel, amit a
+            következő példaprogram jól szemléltet.</para>
+        <para>Két osztályunk van: a Madar és a Program, a Madar osztályt tekintjük T-nek. Ez az
+            osztály tartalmaz egy repul() függvényt ezt úgy is tekinthetjük, hogy a madarak tudnak
+            repülni. Ezután következnek az Madar alosztályai a Sas és Pingvin osztályok. A Pingvin
+            osztály viszont megsérti a Liskov elvet, mert madár, de repülni nem tud, a programban
+            viszont hiba nélkül tudnánk rá alkalmazni a repul() függvényt. Az ilyen problémákra a
+            jobb tervezés lehet megoldás például ha lenne külön nem repülő és repülő madár osztály. </para>
+        <para><emphasis role="bold">C++ program:
+            </emphasis><programlisting>// ez a T az LSP-ben
+class Madar {
+public:
+     virtual void repul() {};
+};
+
+class Program {
+public:
+     void fgv ( Madar &amp;madar ) {
+          madar.repul();
+     }
+};
+
+class Sas : public Madar
+{};
+
+class Pingvin : public Madar 
+{};
+
+int main ( int argc, char **argv )
+{
+     Program program;
+     Madar madar;
+     program.fgv ( madar );
+
+     Sas sas;
+     program.fgv ( sas );
+
+     Pingvin pingvin;
+     program.fgv ( pingvin );
+
+}
+</programlisting></para>
+        <para><emphasis role="bold">Java program:
+            </emphasis><programlisting>class Madar{
+	public void repul(){};
+
+	static class Program{
+		public void fgv(Madar madar){
+			madar.repul();
+		}
+	}
+
+	static class Sas extends Madar{}
+	static class Pingvin extends Madar{}
+
+	public static void main(String[] args) {
+	
+		Program program = new Program();
+		Madar madar = new Madar();
+		program.fgv(madar);
+
+		Sas sas = new Sas();
+		program.fgv(sas);
+
+		Pingvin pingvin = new Pingvin();
+		program.fgv(pingvin);
+	}
+
+}</programlisting></para>
+        <figure>
+            <title>A programok hiba nélkül futnak, de a Liskov elvet sértik</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/liskov.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/liskov2.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+    	
+    </section>    
+    <section>
+        <title>Szülő-gyerek</title>
+        <para>
+            Megoldás forrása:
+        </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>
+        <para> Mind Java-ban és C++-ban az ősön keresztül csak az ős üzenetei közvítíthetők. A
+            példaprogramokban látszik, hogy a gyermekosztályokban definiálunk egy függvény, amit a
+            szülőosztályból példányosított objektumban akarunk használni, de erre nincs
+            lehetőség,fordításban hibát kapunk. </para>
+        <para><emphasis role="bold">Java példa:
+            </emphasis><programlisting>
+class Szulo{
+
+	static class Gyerek extends Szulo{
+		void msg(){
+			System.out.println("Hello");
+		}
+	}
+
+	public static void main(String[] args) {
+
+		Szulo szulo = new Szulo();
+		szulo.msg();	
+	}
+}</programlisting></para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/szulo_java.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <para><emphasis role="bold">C++ példa:</emphasis></para>
+        <programlisting>#include &lt;iostream>
+
+class Szulo{
+public:
+    int a;
+    
+    Szulo(int a){
+        a=a;
+    }
+};
+
+class Gyerek:public Szulo{
+public:
+    int a;
+    
+    Gyerek(int a):Szulo(a){
+        a=a;
+    }
+    
+    int fgv(){
+        return a;
+    }
+    };
+
+int main(){
+    Szulo* szulo = new Szulo(5);
+    szulo->fgv();
+
+
+return 0;    
+}</programlisting>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/szgy.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+    </section>    
+    
+     <section>
+         <title>Ciklomatikus komplexitás</title>
+        <para>A ciklomatikus komplexitás Thomas J. McGabe nevéhez fűződik. A kódunk komplexitására
+            ad egy mértéket, annak alapján hogy lehetséges elágazás van benne. Kézileg, gráffal kell
+            ábrázolunk a programot ésa következő képletet kell használnunk:</para>
+        <para><emphasis>M = E - N + 2P</emphasis> ahol: </para>
+         <itemizedlist>
+             <listitem>
+                 <para>E: gráf éleinek száma</para>
+             </listitem>
+            <listitem>
+                <para>N: gráf csúcsainak száma</para>
+            </listitem>
+            <listitem>
+                <para>P: összefüggő komponensek száma</para>
+            </listitem>
+         </itemizedlist>
+         <para>Ennek az értéknek a kiszámítására nem csak manuálisan van lehetőség több program áll
+            rendelkezésünkre. </para>
+        <para>Én a GNU komplexitás mérő programját használtam amivel, C programok komplexitását
+            lehet mérni. </para>
+        <para>Eredmények az LZW binfa C verzióján:</para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/komplex.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+     </section>
+    <section>
+        <title>Anti OO</title>
+        <para>A mérést Ubuntu 64 bites virtuális gépen végeztem, 8 GB RAM-al és Intel i5 1.6 Ghz-es
+            processzorral. </para>
+        <table frame="all">
+            <title>Mérési eredmények táblázatba gyűjtve:</title>
+            <tgroup cols="5">
+                <colspec colname="c1" colnum="1" colwidth="1*"/>
+                <colspec colname="c2" colnum="2" colwidth="1*"/>
+                <colspec colname="newCol3" colnum="3" colwidth="1*"/>
+                <colspec colname="c3" colnum="4" colwidth="1*"/>
+                <colspec colname="c4" colnum="5" colwidth="1*"/>
+                <thead>
+                    <row>
+                        <entry/>
+                        <entry>C</entry>
+                        <entry>C++</entry>
+                        <entry>C#</entry>
+                        <entry>Java</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>10<superscript>6</superscript></entry>
+                        <entry>1.713795</entry>
+                        <entry>1.71992</entry>
+                        <entry>1.577164</entry>
+                        <entry>1.539</entry>
+                    </row>
+                    <row>
+                        <entry>10<superscript>7</superscript></entry>
+                        <entry>20.055328</entry>
+                        <entry>20.1204</entry>
+                        <entry>18.313944</entry>
+                        <entry>18.043</entry>
+                    </row>
+                    <row>
+                        <entry>10<superscript>8</superscript></entry>
+                        <entry>234.730421</entry>
+                        <entry>235.586</entry>
+                        <entry>212.29012</entry>
+                        <entry>207.146</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </table>
+        <para>Azt hinnénk a C gyorsabb lesz, mint a Java a fordításuk közötti különbség miatt (C
+            rögtön gépi kódra, a Java először bytekódra fordítódik le és fordítja tovább a Java
+            Virtual Machine). Ebben az esetben viszont a Java kódból "kivetettük az
+            objektumorientáltságot, két metóduson kívül, minden kód a main-be került és így a Java
+            bizonyult gyorsabbnak. </para>
+        <para><emphasis role="bold">Használt kódok a futási eredményekkel:</emphasis></para>
+        <para><emphasis role="bold"
+            >C</emphasis><programlisting>#include &lt;stdio.h>
+#include &lt;math.h>
+#include &lt;time.h>
+/*
+ * pi_bbp_bench.c
+ *
+ * DIGIT 2005, Javat tanítok
+ * Bátfai Norbert, nbatfai@inf.unideb.hu
+ *
+ * A PiBBP.java-ból kivettük az "objektumorientáltságot", így kaptuk
+ * a PiBBPBench osztályt, amit pedig átírtuk C nyelvre.
+ *
+ */
+
+/*
+ * 16^n mod k
+ * [BBP ALGORITMUS] David H. Bailey: The
+ * BBP Algorithm for Pi. alapján.
+ */
+long
+n16modk (int n, int k)
+{
+  long r = 1;
+
+  int t = 1;
+  while (t &lt;= n)
+    t *= 2;
+
+  for (;;)
+    {
+
+      if (n >= t)
+	{
+	  r = (16 * r) % k;
+	  n = n - t;
+	}
+
+      t = t / 2;
+
+      if (t &lt; 1)
+	break;
+
+      r = (r * r) % k;
+
+    }
+
+  return r;
+}
+
+/* {16^d Sj}
+ * [BBP ALGORITMUS] David H. Bailey: The
+ * BBP Algorithm for Pi. alapján.
+ */
+double
+d16Sj (int d, int j)
+{
+
+  double d16Sj = 0.0;
+  int k;
+
+  for (k = 0; k &lt;= d; ++k)
+    d16Sj += (double) n16modk (d - k, 8 * k + j) / (double) (8 * k + j);
+
+  /*
+     for(k=d+1; k&lt;=2*d; ++k)
+     d16Sj += pow(16.0, d-k) / (double)(8*k + j);
+   */
+
+  return d16Sj - floor (d16Sj);
+}
+
+/*
+ * {16^d Pi} = {4*{16^d S1} - 2*{16^d S4} - {16^d S5} - {16^d S6}}
+ * [BBP ALGORITMUS] David H. Bailey: The
+ * BBP Algorithm for Pi. alapján.
+ */
+main ()
+{
+
+  double d16Pi = 0.0;
+
+  double d16S1t = 0.0;
+  double d16S4t = 0.0;
+  double d16S5t = 0.0;
+  double d16S6t = 0.0;
+
+  int jegy;
+  int d;
+
+  clock_t delta = clock ();
+
+  for (d = 100000000; d &lt; 100000001; ++d)
+    {
+
+      d16Pi = 0.0;
+
+      d16S1t = d16Sj (d, 1);
+      d16S4t = d16Sj (d, 4);
+      d16S5t = d16Sj (d, 5);
+      d16S6t = d16Sj (d, 6);
+
+      d16Pi = 4.0 * d16S1t - 2.0 * d16S4t - d16S5t - d16S6t;
+
+      d16Pi = d16Pi - floor (d16Pi);
+
+      jegy = (int) floor (16.0 * d16Pi);
+
+    }
+
+  printf ("%d\n", jegy);
+  delta = clock () - delta;
+  printf ("%f\n", (double) delta / CLOCKS_PER_SEC);
+} 
+</programlisting></para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/pi_c_BM.png"/>
+                </imageobject>
+            </mediaobject>
+            <para><emphasis role="bold">C++</emphasis></para>
+        </informalfigure>
+        <programlisting>#include &lt;stdio.h>
+#include &lt;math.h>
+#include &lt;time.h>
+#include &lt;iostream>
+
+long n16modk(int n,int k){
+    long r = 1;
+    
+    int t = 1;
+    while(t &lt;= n)
+        t *= 2;
+    
+    for(;;){
+        
+        if(n >= t){
+            r = (16 * r) % k;
+            n = n - t;
+        }
+        
+        t = t / 2;
+        
+        if(t &lt; 1)
+            break;
+        
+        r = (r * r) % k;
+    }
+    
+    return r;
+}
+
+double d16Sj(int d,int j){
+    
+    double d16Sj = 0.0;
+    int k;
+    
+    for(k = 0; k &lt;= d; ++k)
+        d16Sj += (double) n16modk(d - k, 8 * k + j) / (double) (8 * k + j);
+    
+    return d16Sj - floor(d16Sj);
+}
+
+main(){
+    double d16Pi = 0.0;
+
+  double d16S1t = 0.0;
+  double d16S4t = 0.0;
+  double d16S5t = 0.0;
+  double d16S6t = 0.0;
+
+  int jegy;
+  int d;
+
+  clock_t delta = clock ();
+
+  for (d = 100000000; d &lt; 100000001; ++d)
+    {
+
+      d16Pi = 0.0;
+
+      d16S1t = d16Sj (d, 1);
+      d16S4t = d16Sj (d, 4);
+      d16S5t = d16Sj (d, 5);
+      d16S6t = d16Sj (d, 6);
+
+      d16Pi = 4.0 * d16S1t - 2.0 * d16S4t - d16S5t - d16S6t;
+
+      d16Pi = d16Pi - floor (d16Pi);
+
+      jegy = (int) floor (16.0 * d16Pi);
+
+    }
+    
+    std::cout&lt;&lt;jegy&lt;&lt;"\n";
+    delta = clock() -delta;
+    std::cout&lt;&lt;(double)delta / CLOCKS_PER_SEC&lt;&lt;"\n";
+}
+</programlisting>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/pi_cpp_BM.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <para><emphasis role="bold"
+            >C#</emphasis><programlisting>/*
+ * FileName: PiBBPBench.cs
+ * Author: Bátfai Norbert, nbatfai@inf.unideb.hu
+ * DIGIT 2005, Javat tanítok
+ */
+/// &lt;summary>
+/// A PiBBPBench C# átírata.
+/// &lt;/summary>
+/// &lt;remark>
+/// A PiBBP.java-ból kivettük az "objektumorientáltságot", így kaptuk
+/// a PiBBPBench osztályt, amit pedig átírtuk C# nyelvre.
+///
+/// (A PiBBP osztály a BBP (Bailey-Borwein-Plouffe) algoritmust a Pi hexa
+/// jegyeinek számolását végző osztály. A könnyebb olvahatóság
+/// kedvéért a változó és metódus neveket megpróbáltuk az algoritmust
+/// bemutató [BBP ALGORITMUS] David H. Bailey: The BBP Algorithm for Pi.
+/// cikk jelöléseihez.)
+/// &lt;/remark>
+public class PiBBPBench {
+    /// &lt;remark>
+    /// BBP algoritmus a Pi-hez, a [BBP ALGORITMUS] David H. Bailey: The
+    /// BBP Algorithm for Pi. alapján a {16^d Sj} részlet kiszámítása.
+    /// &lt;/remark>
+    /// &lt;param>
+    /// d   a d+1. hexa jegytől számoljuk a hexa jegyeket
+    /// &lt;/param>
+    /// &lt;param>
+    /// j   Sj indexe
+    /// &lt;/param>
+    public static double d16Sj(int d, int j) {
+        
+        double d16Sj = 0.0d;
+        
+        for(int k=0; k&lt;=d; ++k)
+            d16Sj += (double)n16modk(d-k, 8*k + j) / (double)(8*k + j);
+        
+        /*
+        for(int k=d+1; k&lt;=2*d; ++k)
+            d16Sj += System.Math.pow(16.0d, d-k) / (double)(8*k + j);
+         */
+        
+        return d16Sj - System.Math.Floor(d16Sj);
+    }
+    /// &lt;summary>
+    /// Bináris hatványozás mod k, a 16^n mod k kiszámítása.
+    /// &lt;/summary>
+    /// &lt;param>
+    /// n   kitevő
+    /// &lt;/param>
+    /// &lt;param>
+    /// k   modulus
+    /// &lt;/param>
+    public static long n16modk(int n, int k) {
+        
+        int t = 1;
+        while(t &lt;= n)
+            t *= 2;
+        
+        long r = 1;
+        
+        while(true) {
+            
+            if(n >= t) {
+                r = (16*r) % k;
+                n = n - t;
+            }
+            
+            t = t/2;
+            
+            if(t &lt; 1)
+                break;
+            
+            r = (r*r) % k;
+            
+        }
+        
+        return r;
+    }
+    /// &lt;remark>
+    /// A [BBP ALGORITMUS] David H. Bailey: The
+    /// BBP Algorithm for Pi. alapján a
+    /// {16^d Pi} = {4*{16^d S1} - 2*{16^d S4} - {16^d S5} - {16^d S6}}
+    /// kiszámítása, a {} a törtrészt jelöli. A Pi hexa kifejtésében a
+    /// d+1. hexa jegytől
+    /// &lt;/remark>
+     public static void Main(System.String[]args) { 
+        
+        double d16Pi = 0.0d;
+        
+        double d16S1t = 0.0d;
+        double d16S4t = 0.0d;
+        double d16S5t = 0.0d;
+        double d16S6t = 0.0d;
+        
+        int jegy = 0;
+        
+        System.DateTime kezd = System.DateTime.Now;
+        
+        for(int d=100000000; d&lt;100000001; ++d) {
+            
+            d16Pi = 0.0d;
+            
+            d16S1t = d16Sj(d, 1);
+            d16S4t = d16Sj(d, 4);
+            d16S5t = d16Sj(d, 5);
+            d16S6t = d16Sj(d, 6);
+            
+            d16Pi = 4.0d*d16S1t - 2.0d*d16S4t - d16S5t - d16S6t;
+            
+            d16Pi = d16Pi - System.Math.Floor(d16Pi);
+            
+            jegy = (int)System.Math.Floor(16.0d*d16Pi);
+            
+        }
+        
+        System.Console.WriteLine(jegy);
+        System.TimeSpan delta = System.DateTime.Now.Subtract(kezd);
+        System.Console.WriteLine(delta.TotalMilliseconds/1000.0);
+    }
+}</programlisting></para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/pi_cs_BM.png"/>
+                </imageobject>
+            </mediaobject>
+            <para><emphasis role="bold">Java:</emphasis></para>
+            <programlisting>/*
+ * PiBBPBench.java
+ *
+ * DIGIT 2005, Javat tanítok
+ * Bátfai Norbert, nbatfai@inf.unideb.hu
+ *
+ */
+/**
+ * A PiBBP.java-ból kivettük az "objektumorientáltságot", így kaptuk
+ * ezt az osztályt.
+ *
+ * (A PiBBP osztály a BBP (Bailey-Borwein-Plouffe) algoritmust a Pi hexa
+ * jegyeinek számolását végző osztály. A könnyebb olvahatóság
+ * kedvéért a változó és metódus neveket megpróbáltuk az algoritmust
+ * bemutató [BBP ALGORITMUS] David H. Bailey: The BBP Algorithm for Pi.
+ * cikk jelöléseihez.)
+ *
+ * @author Bátfai Norbert, nbatfai@inf.unideb.hu
+ * @version 0.0.1
+ */
+public class PiBBPBench {
+    /**
+     * BBP algoritmus a Pi-hez, a [BBP ALGORITMUS] David H. Bailey: The
+     * BBP Algorithm for Pi. alapján a {16^d Sj} részlet kiszámítása.
+     *
+     * @param   d   a d+1. hexa jegytől számoljuk a hexa jegyeket
+     * @param   j   Sj indexe
+     */
+    public static double d16Sj(int d, int j) {
+        
+        double d16Sj = 0.0d;
+        
+        for(int k=0; k&lt;=d; ++k)
+            d16Sj += (double)n16modk(d-k, 8*k + j) / (double)(8*k + j);
+        
+        /* (bekapcsolva a sorozat elejen az első utáni jegyekben növeli pl.
+            a pontosságot.)
+        for(int k=d+1; k&lt;=2*d; ++k)
+            d16Sj += Math.pow(16.0d, d-k) / (double)(8*k + j);
+         */
+        
+        return d16Sj - Math.floor(d16Sj);
+    }
+    /**
+     * Bináris hatványozás mod k, a 16^n mod k kiszámítása.
+     *
+     * @param   n   kitevő
+     * @param   k   modulus
+     */
+    public static long n16modk(int n, int k) {
+        
+        int t = 1;
+        while(t &lt;= n)
+            t *= 2;
+        
+        long r = 1;
+        
+        while(true) {
+            
+            if(n >= t) {
+                r = (16*r) % k;
+                n = n - t;
+            }
+            
+            t = t/2;
+            
+            if(t &lt; 1)
+                break;
+            
+            r = (r*r) % k;
+            
+        }
+        
+        return r;
+    }
+    /**
+     * A [BBP ALGORITMUS] David H. Bailey: The
+     * BBP Algorithm for Pi. alapján a
+     * {16^d Pi} = {4*{16^d S1} - 2*{16^d S4} - {16^d S5} - {16^d S6}}
+     * kiszámítása, a {} a törtrészt jelöli. A Pi hexa kifejtésében a
+     * d+1. hexa jegytől
+     */
+    public static void main(String args[]) {
+        
+        double d16Pi = 0.0d;
+        
+        double d16S1t = 0.0d;
+        double d16S4t = 0.0d;
+        double d16S5t = 0.0d;
+        double d16S6t = 0.0d;
+        
+        int jegy = 0;
+        
+        long delta = System.currentTimeMillis();
+        
+        for(int d=100000000; d&lt;100000001; ++d) {
+            
+            d16Pi = 0.0d;
+            
+            d16S1t = d16Sj(d, 1);
+            d16S4t = d16Sj(d, 4);
+            d16S5t = d16Sj(d, 5);
+            d16S6t = d16Sj(d, 6);
+            
+            d16Pi = 4.0d*d16S1t - 2.0d*d16S4t - d16S5t - d16S6t;
+            
+            d16Pi = d16Pi - Math.floor(d16Pi);
+            
+            jegy = (int)Math.floor(16.0d*d16Pi);
+            
+        }
+        
+        System.out.println(jegy);
+        delta = System.currentTimeMillis() - delta;
+        System.out.println(delta/1000.0);
+    }
+}</programlisting>
+            <informalfigure>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata fileref="Images/pi_java_BM.png"/>
+                    </imageobject>
+                </mediaobject>
+            </informalfigure>
+        </informalfigure>
+    </section>
+    
+</chapter>                

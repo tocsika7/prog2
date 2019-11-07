@@ -1,0 +1,75 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Helló, Berners-Lee!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>Python: Bevezetés a mobilprogramozásba</title>
+        <para>
+            A Python egy platformfüggetlen programozási nyelv, magas szintű objektumorientált programozási nyelv. Egyik mobilprogramozáshoz használt változata a PythonS60 Symbian mobil op. rendszerre. A Python a C-től eltérően interpreteres nyelv nem szükséges fordítani futtatás előtt. A nyelv előnye, hogy tartalmaz magas szintű adattípusokat, nincs szükség zárójelekre a kódcsoportosítás tabulátorral van megoldva, illetve a változókat sem kell definiálnunk. Az értelmező a sorokat tokenekre bontja és úgy értelmezi.
+        </para>
+        <para>
+            A Python minden adat objektum, a változók típusait nem kell nekünk megadni, a futás során értékének megfelelő típust kap. A változótípusokból a legtöbb a C-ben is megtalálható, ezektől eltérő változók a szótár, ennesek és a listák. Ezek egyszerre több, akár eltérő típusú értéket tartalmaznak és szekvenciáknak nevezzük őket. Indexelésük 0-tól kezdődik, de ha negatívan indexelünk a szekvencia végétől kezdődik. A len és del függvényekkel lekérhetjük a hosszukat, és törölhetünk elemeket. A listák rendezettek és dinamikusak, míg a szótárak rendezetlen kulcsokkal azonosított elemeket tartalmaznak. Egy változóhoz értékadáskor hozzárendelhetünk objektumot, típust és függvényt.
+            Az elágazások és ciklusok hasonlóak, mint C-ben, a for ciklushoz használhatunk range(x) és xrange(x) függvényeket, ami egész értékeket tartalmaz 0-tól x-ig. Az elseif Python-os változata pedig az elif.
+            Függvényeket a def kulcsszóval hozhatunk létre. A paraméterek érték szerint adódnak, át kivéve pl., ha listákat szótárakat adunk meg. Lehetőség van az alapértelmezett paraméterek megadására is, illetve megadhatunk paramétereket függvényhíváskor is.
+        </para>
+        <para>
+            Címkéket a label kulcsszóval tehetünk a szövegbe, itt fontos megemlíteni a goto és comefrom függvényeket. Ha a program futáskor elér a goto függvényhez az adott label-hez ugrik. A comefrom ettől ellentétesen, ha elér a program az adott label-hez a comefrom-ot tartalmazó kódrészhez ugrik.
+            Lehetőségünk van osztálydefiniálásra is, ezeknek a példányai objektumok, és tulajdonságai lehetnek függvények és objektumok. Ha egy osztályban valamilyen tulajdonságot megváltoztatunk, akkor az megváltozik az osztály példányaiban is, hacsak az nem volt bennük már előtte megváltoztatva. Az attribútum függvényeket, vagy metódusokat globális függvényként lehet definiálni, az első paraméterük mindig a self lesz, ami arra az objektumpéldányra utal, ahol a függvényt meghívjuk. 
+            Az __init__ metódus egy speciális metódus, ami konstruktorként működik. Első paramétere self, az objektum, amit létre akarunk hozni, a többi paraméter pedig a tulajdonságok, amiket hozzá akarunk rendelni az objektumhoz. 
+        </para>
+        <para>
+            A Python tartalmaz mobilfejlesztésre használt modulokat. Ilyenek például az appuifw, amellyel kialakíthatjuk és kezelhetjük a felhasználói felületet. A messaging modul az üzenetkezelésért, a sysinfo modul a telefonnal kapcsolatos információk lekérdezésért felelősek. A kameráért és a hangért felelős modulok a camera és audio modul. 
+        </para>
+        <para>
+            A hibakezelést try-except blokkban oldjuk meg a try blokkba kerül a kód, amiben a hibát keressük, az except blokkban pedig az a kód, ami lefut, ha hibát találunk. A keresendő hibát az except mellé írjuk [] zárójelekbe. Kapcsolhatunk egy else ágat is, az except után vagy esetleg helyette egy finally blokk, amit például fájlok bezárására lehet használni hiba esetén
+        </para>
+    </section>        
+
+    <section>
+        <title>Java: Java 2 útikalauz 5</title>
+        <para>
+A Java nyelv teljesen objektumorientált, egy program kizárólag osztályokból és objektumokból épül fel. A programunkat futtatás előtt fordítani kell, ilyenkor bájtkódokra fordul a program, amit a Java Virtuális Gép interpreterként értelmez és futtat. A nyelv UNICODE karaktereket használ.   
+        </para>
+	<para>
+Az egyszerű változótípusok hasonlóak, mint a C-ben/C++-ban. A C-hez képest újdonság viszont a String típus, amit a karakterláncok kezelésére hoztak létre. Az azonosítok csak betűvel kezdődhetnek és nem tartalmazhatják a nyelv kulcsszavait. Az egyszerű típusúakhoz valódi értékadással, míg az összetett típusok esetén referencia által rendelünk hozzájuk értéket.	</para>
+		<para>
+			Az egyszerű és összetett típusok inicializálásakor literálokat használunk. Objektumoknál ez a null, ami bármely objektumreferencia helyett használható. A logikai érték lehet igaz vagy hamis, az egész számokat a kezdőkarakterük határozza meg: lehetnek oktális, hexadecimális és decimálisak
+		</para>
+		<para>
+			Ha egy értékét többször fel szeretnénk használni egy programban és nem akarjuk változtatni az értékét, érdemes konstansként, nem pedig változóként deklarálni. Ezt a final static kulcsszavakkal tehetjük meg. A lebegőpontos számok decimálisak tizedesponttal elválasztva. Karaktereket’’ szövegeket”” jelek közé írunk. A szövegek létrehozásakor String objektum kerül létrehozásra.
+		</para>
+		<para>
+			A tömbök a C/C++-tól eltérően nem mutatók, hanem valódi típus. Nem primitív típusok, objektumhivatkozást tartalmaznak.  Többdimenziós tömbök alapértelmezetten nincsenek a nyelvben, de meg lehet oldani a létrehozásokat pl.: a tömb tartalmazhat tömböket. 
+Bizonyos értékeket felsorolási típusokban is tárolhatunk pl.: hét napjai. Ezek értékét akár tömbökben is elhelyezhetjük. 
+		</para>
+	
+<para>
+Megjegyzéseket háromféleképpen írhatunk a kódba. Ezek közül kiemelendő a dokumentációs megjegyzés, amit a javadoc alkalmazással HTML dokumentációvá tehetünk. A megjegyzések mindhárom fajtáját figyelmen kívül hagyja a fordító. </para>
+<para>
+Osztályokat a Class kulcsszóval hozhatunk létre, ezekhez adattagok és metódusok tartoznak, ezeket más nyelvekben változóknak és függvényeknek nevezzük. A Java-ban az objektumokat az new operátorral példányosíthatunk. pl. Osztály obejktum1 = new Osztály (). Ilyenkor memóriát foglalunk, ezt a new operátor tárolja. Az osztály változó pedig egy referenciát tartalmaz az objektumról, ami ténylegesen az objektumra mutat nem pedig a memóriában lévő címére. Ellentétben például a C-vel, ahol mutatókat alkalmazunk, amik adott memóriacímre utalnak. Az osztály típusú változók egyben referencia típusú változók is. Ha használjuk a final kulcsszút az osztályváltozó előtt akkor minidig csak ugyanarra az objektumra fog hivatkozni, viszont a tulajdonságait változtathatjuk. A null referenciaérték egyetlen objektumra sem mutat, ez a referencia típusú változók alapértelmezett értéke. Ha egy objektumot törölni szeretnék azt más nyelvekben általában manuálisan kell megtennünk. Java-ban, ha a rendszer látja, hogy nincs az objektumra hivatkozva, akkor automatikusan törlődik. Ezt a szemétgyűjtő mechanizmus végzi. Egy hivatkozás akkor szabadul fel, ha változója új értéket kap vagy törlődik.</para>
+<para>
+ A kivételek kezelésére a try-catch blokkot használjuk, mint a C-ben. Maga a program a try blokkban van, ha futás közben hibát talál a fordító a try blokkban a catch blokkra ugrik a vezérlés. A catch blokknak dobott hiba is egy objektum típusa a hiba fajtája, adattagjai pedig a hiba részletei. </para>
+		<para>
+			A Java-ban a műveletek ugyanolyan sorrendben értékelődnek ki (balról jobbra), mint a C-ben és az operátorok is nagyjából megegyeznek. A logikai műveleteknek két fajtája van: a mohó és a lusta kiértékelésű. A lusta változatban az operandusok nem mindig kerülnek kiértékelésre pl.: és művelet első tagja hamis. 
+		</para>
+		<para>
+			Típuskonverzióra a nyelvben háromféle lehetőség van. Ha többféle primitív típussal végzünk műveletet akkor automatikus a konverzió automatikus, az eredmény mindig olyan típusú lesz amelyik nagyobb tárhelyű.
+Explicit konverzióra akkor van szükség, ha alaptípusok között a kisebb értelmezési tartományra szeretnénk váltani, illetve objektumok referenciatípusa esetén, ha a statikus és dinamikus típusa nem egyezik meg. Azaz, ha a deklarálásnál megadott típus különbözik annak az objektumnak a típusától amire hivatkozik. 
+A harmadik típus a szövegkonverzió, amikor egy nem String típust String típusra konvertálunk, vagy konkatenációt használunk. 
+		</para>
+		<para>
+			Ahhoz, hogy elérjünk egy adott struktúra egy részelemét minden eseteben a „.” -ot kell használni, nincs megkülönböztetett jelölés az osztálytagok elérésére mint C++-ban a „::” operátor. 
+Az utasításoknak két fajtája van: a kifejezés (értékadás, metódushívások stb.), és a deklarációs-utasítások. 
+Elágazásoknak két fajtáját különböztetjük meg: az egyszerűt (if) és összetettet (swtich).  Ezek ugyanúgy működnek, mint C-ben/C++-ban. 
+Ciklusok tekintetében a jól ismert fajták (while, do-while, for) itt is megtalálhatóak. A bejáró ciklus egy különleges for ciklus, ami adatszerkezetek bejárására használható. 
+A címkék, break, continue utasítások ugyanazok, mint C-ben viszont a Java elhagyta a nem túl biztonságos goto utasítást. 
+
+		</para>
+    </section>        
+        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</chapter>                

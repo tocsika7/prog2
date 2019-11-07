@@ -1,0 +1,562 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Helló, Chaitin!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+    <section>
+        <title>Iteratív és rekurzív faktoriális Lisp-ben</title>
+        <para>
+                
+        </para>
+        <para>
+            Megoldás videó: <link xlink:href="https://youtu.be/z6NJE2a1zIA">https://youtu.be/z6NJE2a1zIA</link>      
+        </para>
+        <para>
+            Megoldás forrása:    <link xlink:href="https://gitlab.com/tocsika7/prog1/tree/master/Chaitin/Lisp_Faktori%C3%A1lis">https://gitlab.com/tocsika7/prog1/tree/master/Chaitin/Lisp_Faktori%C3%A1lis</link>              
+        </para>
+		<para>
+		Megoldás rekurzívan: 
+		</para>
+		<para>
+		Definiáljuk a fakt függvényt n paraméterrel. Egy if-el megnézzük kisebb-e az n, mint 1. Ha nem, akkor megszorozzuk n-1-el, amit a rekurzívan meghívott fakt 
+		függvénnyel érjük el. Fontos megjegyezni hogy lisp-ben a műveleteket preorder módon használjuk. 
+		</para>
+		<programlisting language="lisp"><![CDATA[
+		(define (fakt n)(if (< n 1) 1 (* n (fakt(- n 1)))))
+		]]></programlisting>
+		<para>
+		Megoldás iteratívan:
+		</para>
+		<para>
+		Az iteratív megoldásban is használunk rekurziót, de igazából mégsem mert az alap függvény nem tartalmaz. Készítünk egy segédfüggvényt a faktoriális függvényen belül két paraméterrel (num, count);
+		Megnézzük a count nagyobb-e ,mint a megeadott szám ha igen visszadjuk a num változót.
+		Ha nem elkezdjük a rekurziót tehát a számot szorozzuk a számlálóval és a számlálót növeljük. Ez addig fog menni amíg a számláló nem éri el az alapfüggvényben megadott szám értékét. 
+		</para>
+		<programlisting language="lisp"><![CDATA[
+		(define (fakt n)
+		(define (seged num count)
+			(if (> count n)
+				num
+				(seged (* num count)(+ count 1))
+			)
+		)
+		(seged 1 1))
+		]]></programlisting>
+    </section>        
+<!--        
+    <section>
+        <title>Weizenbaum Eliza programja</title>
+        <para>
+            Éleszd fel Weizenbaum Eliza programját!
+        </para>
+        <para>
+            Megoldás videó:
+        </para>
+        <para>
+            Megoldás forrása:                
+        </para>
+    </section>        
+-->
+    <section>
+        <title>Gimp Scheme Script-fu: króm effekt</title>
+        <para>
+            Írj olyan script-fu kiterjesztést a GIMP programhoz, amely megvalósítja a króm effektet egy 
+            bemenő szövegre!
+        </para>
+        <para>
+            Megoldás videó: <link xlink:href="https://youtu.be/OKdAkI_c7Sc">https://youtu.be/OKdAkI_c7Sc</link>      
+        </para>
+        <para>
+            Megoldás forrása: <link xlink:href="https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/GIMP_Lisp/Chrome">https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/GIMP_Lisp/Chrome</link>               
+        </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>    
+		<para>
+		A program első részében deklarálunk néhány függvényt: A color-curve függvényben eltárolunk egy tömbben 8 értéket, amik a GIMP színgörbéjének bizonyos értékei. 
+		Az elem függvénnyel az kérjük le egy listáról, hogy a megadott elem hányadik. A lisp-ben a változók lehetnek listák tehát több elemük is lehet. A wh függvényben az adott szöveg
+		magasságát és szélességét kérjük le. 
+		</para>
+		<programlisting language="lisp"><![CDATA[
+		; bhax_chrome3.scm
+;
+; BHAX-Chrome creates a chrome effect on a given text.
+; Copyright (C) 2019  
+; Norbert Bátfai, batfai.norbert@inf.unideb.hu
+; Nándor Bátfai, batfai.nandi@gmail.com
+;
+;    This program is free software: you can redistribute it and/or modify
+;    it under the terms of the GNU General Public License as published by
+;    the Free Software Foundation, either version 3 of the License, or
+;    (at your option) any later version.
+;
+;    This program is distributed in the hope that it will be useful,
+;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;    GNU General Public License for more details.
+;
+;    You should have received a copy of the GNU General Public License
+;    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;
+; Version history
+;
+;  This Scheme code is partially based on the Gimp tutorial 
+;  http://penguinpetes.com/b2evo/index.php?p=351 
+;  (the interactive steps of this tutorial are written in Scheme)
+;
+;  https://bhaxor.blog.hu/2019/01/10/a_gimp_lisp_hackelese_a_scheme_programozasi_nyelv
+; 
+
+(define (color-curve)
+    (let* (
+        (tomb (cons-array 8 'byte))
+    )
+        (aset tomb 0 0)
+        (aset tomb 1 0)
+        (aset tomb 2 50)
+        (aset tomb 3 190)
+        (aset tomb 4 110)
+        (aset tomb 5 20)
+        (aset tomb 6 200)
+        (aset tomb 7 190)
+    tomb)    
+)
+
+;(color-curve)
+
+(define (elem x lista)
+
+    (if (= x 1) (car lista) (elem (- x 1) ( cdr lista ) ) )
+
+)
+
+(define (text-wh text font fontsize)
+(let*
+    (
+        (text-width 1)
+        (text-height 1)
+    )
+ 
+    (set! text-width (car (gimp-text-get-extents-fontname text fontsize PIXELS font)))    
+    (set! text-height (elem 2  (gimp-text-get-extents-fontname text fontsize PIXELS font)))    
+    
+    (list text-width text-height)
+    )
+		]]></programlisting>
+		<para>
+		Létrehozzuk a chrome függvényt amelynek a paraméterei: 
+		</para>
+		<itemizedlist>
+		<listitem><para>szöveg</para></listitem>
+		<listitem><para>betűtípus</para></listitem>
+		<listitem><para>betűméret</para></listitem>
+		<listitem><para>szélesség</para></listitem>
+		<listitem><para>magasság</para></listitem>
+		<listitem><para>szín</para></listitem>
+		<listitem><para>színátmenet</para></listitem>
+		</itemizedlist>
+		<para>
+		A további részekben lépésenként haladunk a szöveg változtatásával amelyek a következők:
+		</para>
+		<itemizedlist>
+		<listitem><para>1: Létrehozzuk egy fekte háttérréteget egy fehér középre tolt szöveggel.</para></listitem>
+		<listitem><para>2: Egy erős gauss elmosódást rakunk a képre.</para></listitem>
+		<listitem><para>3: A szinek határszintjének alsó és felső határának megváltoztatásával élesítünk az elmosódott képen.</para></listitem>
+		<listitem><para>4: Újra alakalmazzuk a gauss elomsást.</para></listitem>
+		<listitem><para>5: Szín szerinti kijelöléssel kijelöljük a fekete területet. </para></listitem>
+		<listitem><para>6: Létrehozunk majd kijelölünk egy átlásztó réteget.</para></listitem>
+		<listitem><para>7: Az előbb létrehozott átlásztó réteget kitöljük egy sötétszürkéből világosszürkébe való színátmenettel. </para></listitem>
+		<listitem><para>8: Bucka leképezést alkalmazunk a második réteget az első réteg használatával. </para></listitem>
+		<listitem><para>9: A színgörbéket módosítjuk, ezeken egy hullám mintát állítunk be. </para></listitem>
+		</itemizedlist>
+		<programlisting language="lisp"><![CDATA[
+		(define (script-fu-bhax-chrome text font fontsize width height color gradient)
+(let*
+    (
+        (image (car (gimp-image-new width height 0)))
+        (layer (car (gimp-layer-new image width height RGB-IMAGE "bg" 100 LAYER-MODE-NORMAL-LEGACY)))
+        (textfs)
+        (text-width (car (text-wh text font fontsize)))
+        (text-height (elem 2 (text-wh text font fontsize)))
+        (layer2)        
+    )
+    
+	
+	
+
+    ;step 1
+    (gimp-image-insert-layer image layer 0 0)
+    (gimp-context-set-foreground '(0 0 0))
+    (gimp-drawable-fill layer  FILL-FOREGROUND )
+    (gimp-context-set-foreground '(255 255 255))
+   
+    (set! textfs (car (gimp-text-layer-new image text font fontsize PIXELS)))
+    (gimp-image-insert-layer image textfs 0 0)   
+    (gimp-layer-set-offsets textfs (- (/ width 2) (/ text-width 2)) (- (/ height 2) (/ text-height 2)))
+   
+    (set! layer (car(gimp-image-merge-down image textfs CLIP-TO-BOTTOM-LAYER)))
+   
+
+    ;step 2   
+    (plug-in-gauss-iir RUN-INTERACTIVE image layer 15 TRUE TRUE)
+   
+	 
+    ;step 3
+    (gimp-drawable-levels layer HISTOGRAM-VALUE .11 .42 TRUE 1 0 1 TRUE)
+   
+
+    ;step 4   
+    (plug-in-gauss-iir RUN-INTERACTIVE image layer 2 TRUE TRUE)
+
+
+    ;step 5    
+    (gimp-image-select-color image CHANNEL-OP-REPLACE layer '(0 0 0))
+    (gimp-selection-invert image)
+
+
+    ;step 6        
+    (set! layer2 (car (gimp-layer-new image width height RGB-IMAGE "2" 100 LAYER-MODE-NORMAL-LEGACY)))
+    (gimp-image-insert-layer image layer2 0 0)
+
+
+    ;step 7        
+	(gimp-context-set-gradient gradient) 
+	(gimp-edit-blend layer2 BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-LINEAR 100 0 REPEAT-NONE 
+        FALSE TRUE 5 .1 TRUE width (/ height 3) width  (- height (/ height 3)))
+    
+	
+
+    ;step 8        
+    (plug-in-bump-map RUN-NONINTERACTIVE image layer2 layer 120 25 7 5 5 0 0 TRUE FALSE 2)
+   
+
+    ;step 9      	
+    (gimp-curves-spline layer2 HISTOGRAM-VALUE 8 (color-curve))
+      
+    (gimp-display-new image)
+    (gimp-image-clean-all image)
+    )
+)
+		]]></programlisting>
+		<para>
+		A program végén elmentjük a GIMP menüjébe a scriptet és adunk neki alapértelmezett paramétereket. 
+		</para>
+		<programlisting language="lisp"><![CDATA[
+		
+		
+	(script-fu-register "script-fu-bhax-chrome"
+    "Chrome3"
+    "Creates a chrome effect on a given text."
+    "Norbert Bátfai"
+    "Copyright 2019, Norbert Bátfai"
+    "January 19, 2019"
+    ""
+    SF-STRING       "Text"      "Bátf41 Haxor"
+    SF-FONT         "Font"      "Sans"
+    SF-ADJUSTMENT   "Font size" '(100 1 1000 1 10 0 1)
+    SF-VALUE        "Width"     "1000"
+    SF-VALUE        "Height"    "1000"
+    SF-COLOR        "Color"     '(255 0 0)
+    SF-GRADIENT     "Gradient"  "Crown molding"    
+)
+(script-fu-menu-register "script-fu-bhax-chrome" 
+    "
+		]]></programlisting>
+        <figure>
+            <title>A program kipróbálása</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/chrome.png" format="png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>        
+		
+
+    <section>
+        <title>Gimp Scheme Script-fu: név mandala</title>
+        <para>
+            Írj olyan script-fu kiterjesztést a GIMP programhoz, amely név-mandalát készít a
+            bemenő szövegből!               
+        </para>
+        <para>
+            Megoldás videó: <link xlink:href="https://bhaxor.blog.hu/2019/01/10/a_gimp_lisp_hackelese_a_scheme_programozasi_nyelv">https://bhaxor.blog.hu/2019/01/10/a_gimp_lisp_hackelese_a_scheme_programozasi_nyelv</link>      
+        </para>
+        <para>
+            Megoldás forrása: <link xlink:href="https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/GIMP_Lisp/Mandala">https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/GIMP_Lisp/Mandala</link>               
+        </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>            
+		<para>
+		A mandalát elforgatott kézírott szövegekből készítjük, rakunk rá két kört keretnek és a közepére is írhatunk szöveget. 
+		</para>
+		<para>
+		Forráskód: 
+		</para>
+		<para>
+		A programot néhány függvény deklarálásával kezdjük. Fontos megjegyezni, hogy lisp-ben a változók listák tehát egyszerre több elemük is lehet. Az elem függvénnyel
+		azt kérjük le egy listáról, hogy a megadott elem hányadik.Lekérjük a szöveg szélességét a text-width  függvénnyel. Alapból a beépített gimp függvény több értéket ad vissza, ezért használjuk a car függvényt, hogy csak a 
+		a legelső a paramétert adjuk vissza tehát a szélességét. A text-wh függvénnyel egy hasonló módszerrel egy listába lekérjük az adott szöveg szélességét és magasságát.
+		</para>
+		<programlisting language="lisp"><![CDATA[
+; bhax_mandala9.scm
+;
+; BHAX-Mandala creates a mandala from a text box.
+; Copyright (C) 2019  Norbert Bátfai, batfai.norbert@inf.unideb.hu
+;
+;    This program is free software: you can redistribute it and/or modify
+;    it under the terms of the GNU General Public License as published by
+;    the Free Software Foundation, either version 3 of the License, or
+;    (at your option) any later version.
+;
+;    This program is distributed in the hope that it will be useful,
+;    but WITHOUT ANY WARRANTY; without even the implied warranty of
+;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;    GNU General Public License for more details.
+;
+;    You should have received a copy of the GNU General Public License
+;    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;
+; Version history
+;
+;  This Scheme code is partially based on the Python code 
+;  Pat625_Mandala_With_Your_Name.py by Tin Tran, which is released under the GNU GPL v3, see 
+;  https://gimplearn.net/viewtopic.php/Pat625-Mandala-With-Your-Name-Script-for-GIMP?t=269&p=976
+;
+;  https://bhaxor.blog.hu/2019/01/10/a_gimp_lisp_hackelese_a_scheme_programozasi_nyelv
+
+(define (elem x lista)
+
+    (if (= x 1) (car lista) (elem (- x 1) ( cdr lista ) ) )
+
+)
+
+(define (text-width text font fontsize)
+(let*
+    (
+        (text-width 1)
+    )
+    (set! text-width (car (gimp-text-get-extents-fontname text fontsize PIXELS font)))    
+
+    text-width
+    )
+)
+
+(define (text-wh text font fontsize)
+(let*
+    (
+        (text-width 1)
+        (text-height 1)
+    )
+    ;;;
+    (set! text-width (car (gimp-text-get-extents-fontname text fontsize PIXELS font)))    
+    ;;; ved ki a lista 2. elemét
+    (set! text-height (elem 2  (gimp-text-get-extents-fontname text fontsize PIXELS font)))    
+    ;;;    
+    
+    (list text-width text-height)
+    )
+)
+		]]></programlisting>
+		<para>
+		A mandala script definiálása 8 paraméterrel, amik a következők: szöveg amiből készül, szöveg középen, betűtípus, betű méret, szélesség, magasság, szöveg színének RGB kódja, színátmenet.
+		A lisp-ben a változókat a let* függvény segítségével definiáljuk. RGB képet hozunk létre a megadott szélességgel és magassággal.Elkészítjük a háttérréteget illetve a szükséges szövegeket.
+		Beállítunk egy előtérszínt amivel a hátteret kitöltjük, majd értékül adjuk neki a paraméterként kapott színt. Beállítjuk ezen kívül a betűméretet és betűsítlust.
+		</para>
+	<programlisting language="lisp"><![CDATA[
+	(define (script-fu-bhax-mandala text text2 font fontsize width height color gradient)
+(let*
+    (
+        (image (car (gimp-image-new width height 0))) 
+        (layer (car (gimp-layer-new image width height RGB-IMAGE "bg" 100 LAYER-MODE-NORMAL-LEGACY))) 
+        (textfs)
+        (text-layer)
+        (text-width (text-width text font fontsize))
+        ;;;
+        (text2-width (car (text-wh text2 font fontsize)))
+        (text2-height (elem 2 (text-wh text2 font fontsize)))
+        ;;;
+        (textfs-width)
+        (textfs-height)
+        (gradient-layer)
+    )
+
+    (gimp-image-insert-layer image layer 0 0)
+
+    (gimp-context-set-foreground '(0 255 0)) 
+    (gimp-drawable-fill layer FILL-FOREGROUND) 
+    (gimp-image-undo-disable image) 
+
+    (gimp-context-set-foreground color) 
+
+    (set! textfs (car (gimp-text-layer-new image text font fontsize PIXELS)))
+    (gimp-image-insert-layer image textfs 0 -1)
+    (gimp-layer-set-offsets textfs (- (/ width 2) (/ text-width 2))  (/ height 2))
+    (gimp-layer-resize-to-image-size textfs)
+	]]></programlisting>
+	<para>
+	Elforgatjuk a szövegeket úgy hogy a pi adott hatványaival szorozzuk fokszámukat. 
+	</para>
+		<programlisting language="lisp"><![CDATA[
+  (set! text-layer (car (gimp-layer-new-from-drawable textfs image)))
+    (gimp-image-insert-layer image text-layer 0 -1)
+    (gimp-item-transform-rotate-simple text-layer ROTATE-180 TRUE 0 0)
+    (set! textfs (car(gimp-image-merge-down image text-layer CLIP-TO-BOTTOM-LAYER)))
+
+    (set! text-layer (car (gimp-layer-new-from-drawable textfs image)))
+    (gimp-image-insert-layer image text-layer 0 -1)
+    (gimp-item-transform-rotate text-layer (/ *pi* 2) TRUE 0 0)
+    (set! textfs (car(gimp-image-merge-down image text-layer CLIP-TO-BOTTOM-LAYER)))
+
+    (set! text-layer (car (gimp-layer-new-from-drawable textfs image)))
+    (gimp-image-insert-layer image text-layer 0 -1)
+    (gimp-item-transform-rotate text-layer (/ *pi* 4) TRUE 0 0)
+    (set! textfs (car(gimp-image-merge-down image text-layer CLIP-TO-BOTTOM-LAYER)))
+    
+    (set! text-layer (car (gimp-layer-new-from-drawable textfs image)))
+    (gimp-image-insert-layer image text-layer 0 -1)
+    (gimp-item-transform-rotate text-layer (/ *pi* 6) TRUE 0 0)
+    (set! textfs (car(gimp-image-merge-down image text-layer CLIP-TO-BOTTOM-LAYER)))   
+	]]></programlisting>
+	<para>
+	Elipszis kivágásokkal létrehozzuk a kereteket. 
+	</para>
+			<programlisting language="lisp"><![CDATA[
+   (plug-in-autocrop-layer RUN-NONINTERACTIVE image textfs)
+    (set! textfs-width (+ (car(gimp-drawable-width textfs)) 100))
+    (set! textfs-height (+ (car(gimp-drawable-height textfs)) 100))
+        
+	(gimp-layer-resize-to-image-size textfs)
+	
+	
+    
+    (gimp-image-select-ellipse image CHANNEL-OP-REPLACE (- (- (/ width 2) (/ textfs-width 2)) 18) 
+        (- (- (/ height 2) (/ textfs-height 2)) 18) (+ textfs-width 36) (+ textfs-height 36))
+	(plug-in-sel2path RUN-NONINTERACTIVE image textfs)
+        
+    (gimp-context-set-brush-size 22)
+    (gimp-edit-stroke textfs)
+    
+    (set! textfs-width (- textfs-width 70))
+    
+	(set! textfs-height (- textfs-height 70))
+	
+	
+	
+    
+    (gimp-image-select-ellipse image CHANNEL-OP-REPLACE (- (- (/ width 2) (/ textfs-width 2)) 18) 
+        (- (- (/ height 2) (/ textfs-height 2)) 18) (+ textfs-width 36) (+ textfs-height 36))
+	(plug-in-sel2path RUN-NONINTERACTIVE image textfs)
+        
+    (gimp-context-set-brush-size 8)
+    (gimp-edit-stroke textfs)
+	]]></programlisting>
+	<para>
+	Beállítjuk a színátmenet, majd létrehozzuk a középen elhelyezett szöveget. 
+	</para>
+	<programlisting language="lisp"><![CDATA[
+	
+	(set! gradient-layer (car (gimp-layer-new image width height RGB-IMAGE "gradient" 100 LAYER-MODE-NORMAL-LEGACY)))
+    
+	
+	
+    (gimp-image-insert-layer image gradient-layer 0 -1)
+	(gimp-image-select-item image CHANNEL-OP-REPLACE textfs)
+	(gimp-context-set-gradient gradient) 
+	(gimp-edit-blend gradient-layer BLEND-CUSTOM LAYER-MODE-NORMAL-LEGACY GRADIENT-RADIAL 100 0 
+	REPEAT-TRIANGULAR FALSE TRUE 5 .1 TRUE (/ width 2) (/ height 2) (+ (+ (/ width 2) (/ textfs-width 2)) 8) (/ height 2))
+	
+	(plug-in-sel2path RUN-NONINTERACTIVE image textfs)
+
+ 
+
+    (set! textfs (car (gimp-text-layer-new image text2 font fontsize PIXELS)))
+    (gimp-image-insert-layer image textfs 0 -1)
+    (gimp-message (number->string text2-height))
+    (gimp-layer-set-offsets textfs (- (/ width 2) (/ text2-width 2)) (- (/ height 2) (/ text2-height 2)))
+		
+    ;(gimp-selection-none image)
+    ;(gimp-image-flatten image)
+    
+    (gimp-display-new image)
+    (gimp-image-clean-all image)
+    )
+)
+	]]></programlisting>
+	<para>
+	Regisztráljuk a GIMP fájlmenüjébe a scriptet és beállítunk alapértelmezett paramétereket. 
+	</para>
+			<programlisting language="lisp"><![CDATA[
+;(script-fu-bhax-mandala "Bátfai Norbert" "BHAX" "Ruge Boogie" 120 1920 1080 '(255 0 0) "Shadows 3")
+
+(script-fu-register "script-fu-bhax-mandala"
+    "Mandala9"
+    "Creates a mandala from a text box."
+    "Norbert Bátfai"
+    "Copyright 2019, Norbert Bátfai"
+    "January 9, 2019"
+    ""
+    SF-STRING       "Text"      "Bátf41 Haxor"
+    SF-STRING       "Text2"     "BHAX"
+    SF-FONT         "Font"      "Sans"
+    SF-ADJUSTMENT   "Font size" '(100 1 1000 1 10 0 1)
+    SF-VALUE        "Width"     "1000"
+    SF-VALUE        "Height"    "1000"
+    SF-COLOR        "Color"     '(255 0 0)
+    SF-GRADIENT     "Gradient"  "Deep Sea"
+)
+
+ 
+
+(script-fu-menu-register "script-fu-bhax-mandala" 
+    "<Image>/File/Create/BHAX"
+)
+	]]></programlisting>
+	
+			<figure>
+  <title>A program kipróbálása</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Images/mandala.png" format="png"/>
+    </imageobject>
+  </mediaobject>
+</figure>
+	
+	
+    </section>        
+
+<!--    
+    <section>
+        <title>Lambda</title>
+        <para>
+            Hasonlítsd össze a következő programokat!
+        </para>
+        <para>
+            Megoldás videó: <link xlink:href=""></link>      
+        </para>
+        <para>
+            Megoldás forrása: <link xlink:href=""></link>               
+        </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>            
+    </section>        
+-->    
+
+<!--
+    <section>
+        <title>Omega</title>
+        <para>
+        </para>
+        <para>
+            Megoldás videó:
+        </para>
+        <para>
+            Megoldás forrása:                
+        </para>
+    </section>        
+-->                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+</chapter>                

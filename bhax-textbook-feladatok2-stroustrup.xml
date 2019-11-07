@@ -1,0 +1,274 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+
+        <title>Helló, Stroustrup!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>JDK Osztályok</title>
+        <para>Megoldás forrás: </para>
+        <para>Tanulságok, tapasztalatok, magyarázat...</para>
+        <para>A feladat az volt, hogy készítsünk olyan Boost C++ programot, ami megszámolja a JDK
+            összes osztályát. </para>
+        <para>A Boost olyan C++ könyvtárakat tartalmaz, amik támogatást nyújtanak pélául a lináris
+            algebrához, többszálas programozásho és unit testinghez.  </para>
+        <para>Az osztályok számolására készült kódrsézt egy read_file() függvénybe írjuk. Ennek a
+            két paramétere egy path objektum, és a egy számláló változó, ami az osztályok számát
+            tárolja. A path osztály a Boost-ban az elérési utak tárolására és feldolgozására lett
+            kitalálva. Ezek az útvonalak stringként vannak inicializálva, amit átadunk a path
+            konstruktornak. </para>
+        <para>Egy if kifejezessel megnézzük, hogy a megadott úton lévő file regular file-e. Ha igen
+            létrehozunk egy stringet, ami tartalmazza azt, hogy pont java, tehát a kiterjesztést,
+            amit keresünk. Ezt a compare függvénnyel összehasonlítjuk az útvonal fájljának
+            kiterjesztésével. Az útvonalból a path.string() függvénnyel stringet készítünk. Majd a
+            find_last_of() függvénnyel megkeressük hol van benne a legutolsó "/" karakter, és innen
+            készítünk belőle egy substringet majd növeljük a számlálót.  </para>
+        <para>Az else ágban azt nézzük meg, hogy a megadott útvonal könyvtár-e. Ha igen, egy for
+            ciklussal végigmegyünk rajta, ehhez a Boost directory_iterator() függvényét használjuk.
+            Itt már csak rekurzívan meghívjuk az előző ágban elkészített függvényt. Így a függvény
+            addig hívódik meg amíg elég "mélyen" nem vagyunk a könyvtárban, hogy megtaláljuk a
+            szükséges fájlokat. </para>
+        <para>A main()-ben néhányt rendszerhívással kicsomagoljuk egy mappába a JDK-t. Az útvonalat
+            deklaráljuk, mint argumentum. Majd meghívjuk a read_file() függvényt. </para>
+        <para>A
+            kód:<programlisting>//g++ jdk_classes.cpp -o jdk_classes -lboost_system -lboost_filesystem -lboost_program_options -std=c++14
+//./jdk_classes mappa_nev
+
+
+#include &lt;iostream>
+#include &lt;string>
+#include &lt;fstream>
+#include &lt;iomanip>
+#include &lt;vector>
+
+#include "boost_1_71_0/boost/filesystem.hpp"
+
+
+using namespace std;
+
+
+
+void read_file ( boost::filesystem::path path,int &amp;szamlalo )
+{
+
+        if ( is_regular_file ( path ) ) {
+
+                string ext ( ".java" );
+                if ( !ext.compare ( boost::filesystem::extension ( path ) ) ) {
+
+                        string actjavaspath = path.string();
+                    size_t end = actjavaspath.find_last_of ( "/" );
+                    string act = actjavaspath.substr ( 0, end );
+
+                        
+                        szamlalo++;
+
+                }
+
+        } else if ( is_directory ( path ) )
+                for ( boost::filesystem::directory_entry &amp; entry : boost::filesystem::directory_iterator ( path ) )
+                        read_file ( entry.path(), szamlalo );
+
+}
+
+int main( int argc, char *argv[])
+{
+    
+    system("mkdir src");
+    system("cd src");
+    system("unzip src.zip -d src");	
+	string path="src";
+	boost::filesystem::path a(argv[1]);
+    int szamlalo=0;
+    read_file(a, szamlalo);
+    cout&lt;&lt; "Az src.zip-ben található java osztályok száma: "&lt;&lt; szamlalo &lt;&lt;endl;
+    return 0;
+
+}
+</programlisting></para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/jdk_classes.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+    	
+    </section>    
+    <section>
+        <title>Másoló-mozgató szemantika és Összegzés</title>
+        <para> Megoldás forrása: </para>
+        <para> Tanulságok, tapasztalatok, magyarázat...</para>
+        <para>A feladat az volt, hogy kódcsipeteken keresztül vessük össze a C++ 11 mozgató és
+            másoló szemantikáját. </para>
+        <para>A két szemantika személtetésére egy egyszerű String osztályt alkalmaztam. Tartalmaz egy
+            char*-okat tartalmazó tömböt ami a buffer, illetve egy m_Size változót, ami ennek a
+            méretét adja meg. A konstruktorban meghatározzuk a string hosszát strlen() függvénnyel,
+            majd ennek megfelelően hozununk létre memóriafoglalást a tömb számára. Memcpy()
+            függvénnyel másoljuk be a Bufferbe a stringet.Ez a függvény a magadott területre másolja
+            a megadott forrást a másolókonstruktorban is ezt a függvényt fogjuk használni.  A
+            destruktorban egyszerűen kitöröljük a buffert. A kiiratásra az ostream operator
+            túlterhelését alkalmazzuk, amit friend-ként deklarálunk hogy a privát tagokhoz is
+            hozzáférhessen.</para>
+        <para>A String
+            osztály:<programlisting>#include &lt;iostream>
+#include &lt;string.h>
+
+lass String{
+    private:
+        char* m_Buffer;
+        unsigned int m_Size;
+    public:
+        String(const char* string)
+        {
+            m_Size = strlen(string);  
+            m_Buffer = new char[m_Size + 1];   
+            memcpy(m_Buffer, string, m_Size); 
+            m_Buffer[m_Size] = 0;
+        }
+
+        ~String(){      
+            delete[] m_Buffer;
+        }
+
+        char&amp; operator[](unsigned int index)  
+        {
+            return m_Buffer[index];
+        }
+
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; stream, const String&amp; string);         
+};
+
+std::ostream&amp; operator&lt;&lt;(std::ostream&amp; stream, const String&amp; string){
+        stream &lt;&lt; string.m_Buffer;
+        return stream;
+    }
+</programlisting></para>
+        <para><emphasis role="bold">Másoló szematika:</emphasis></para>
+        <para>A másoló szematikához egy másoló konstruktor elegendő. C++-ban a programunkban alapból
+            is van egy másoló konstruktor, de ez csak úgynevezett "shallow copy"-t készít.Ilyenkor
+            az objektum tagjai egy új memóriacímre kerülnek.De a char* ugyanarra a memóracímre fog
+            mutatni,mint az eredeti és ebből problémák származhatnak. Elsősorban például, ha
+            megváltoztatjuk az új másolt objektumot, például a 3. karakterét átírjuk 'b'-re, akkor
+            az eredeti objektumban is bekövetkezik a változás.<programlisting>int main(){
+    String string = "test";        
+    String string2 = string;
+    string2[2]='b';  
+
+    std::cout&lt;&lt; string &lt;&lt; std::endl;
+    std::cout&lt;&lt; string2 &lt;&lt; std::endl;
+}</programlisting><inlinemediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/copy_same_error.png"/>
+                </imageobject>
+            </inlinemediaobject></para>
+        <para> A másik probléma, hogy, mivel a két memóriacím megegyezik, ezáltal mikor meghívódik a
+            destruktor,felszabadítja a memóriaterületet,majd újra felszabadítaná ugyanazt a
+            memóriaterületet a másolt objektum miatt.</para>
+        <para> Amit a saját másoló konstruktorunkban, akorunk, hogy  másolásnál új char* tömb
+            allokálódjon,ne pedig a két char* ugyanarra a memóriára mutasson. Ezáltal a másolt
+            stringnek saját memóriacíme lesz, és a pointere is új címre fog mutatni. Ezáltal, ha
+            megváltoztatjuk az egyiket az nincs kihatással a másikra. Ezt a fajta másolást már "deep
+            copy"-nak nevezzük, mert az egész objektumot le fogja másolni és figyelembe veszi a
+            memóriaterületet amire a pointer mutat. A konstruktorban a m_size változót lehetőségünk
+            van "shallow copy"-val másolni, ugyanis ez egy integer, és nem okoz nagy gondot neki
+            memóriát foglalni. Ezután allokálunk egy új Buffert, akkora méretűt mint az m_size. Majd
+            használjuk a memcpy() függvényt és lemásoljuk a régi objektum bufferét az új objektum
+            bufferébe. </para>
+        <programlisting>        String(const String&amp; other) : m_Size(other.m_Size)
+        {
+            std::cout&lt;&lt;"Copy ctor"&lt;&lt;std::endl;
+            m_Buffer = new char[m_Size + 1]; 
+            memcpy(m_Buffer,other.m_Buffer,m_Size+1); 
+        }
+
+int main(){
+    String string = "test";        
+    String string2 = string;
+    string2[2]='b';  
+
+    std::cout&lt;&lt; string &lt;&lt; std::endl;
+    std::cout&lt;&lt; string2 &lt;&lt; std::endl;</programlisting>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/copy.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <para><emphasis role="bold">Mozgató szematika:</emphasis></para>
+        <para>A mozgató szemantika, esetén lehetőségünk van néhány feltétel betartásával arra, hogy
+            az egyik objektum átvegye a másiktól az erőforrásokat.A mozgatás közben például ha egy
+            pointer tagot mozgatunk a mutatott memória átkerül az új taghoz. A mozgatás megértéséhez
+            fontos tudni az lvalue és az rvalue közötti különbséget.Lvalue-nak nevezzük azokat az
+            értékeket, amik olyan objektumot jelölnek aminek van egy biztos helye a memóriában. Az
+            rvalue pedig olyan kifejezés, ami nem jelöl ilyen objektumot. Például int a = 1 egy
+            lvalue, rvalue például egy olyan ideiglenes eredményei kifejezeknek mint példul az
+            (a+1). Ennek nincs lefoglalt memóriabeli helye</para>
+        <programlisting>int a = 1; //lvalue
+(a+1) //rvalue</programlisting>
+        <para> A mozgatás lvalue-k esetén veszélyes lehet, de rvalue esetén nem mert miután a
+            konstruktor lefutott az ideiglenes értéket nem tudjuk újra használni. A mozgatásra az
+            rvaule referenciáját használjuk, ami a C++ 11-ben jött be és &amp;&amp;-el jelöljük,
+            "sima" &amp; referenciát peig lvalue referenciának tekintjük. Ha függvényparaméterként
+            adunk meg rvalue referenciát, akkor automatikusan le fogja tiltani az lvalue megadását,
+            ez a mozgatókonstruktornál nagyon hasznos, mert lvalue-t nem akarunk mozgatni.</para>
+        <para> Fontos hogy a függvény futásakor létrehozásra kerül a paraméterként megadott rvalue
+            referenciával magadott típusú változóból egy ideiglenes objektum. Ez a
+            mozgatókonstruktorban ugye a String-ként szerepel. Itt egyszerűen megteszzük azt, hogy
+            lemásoljuk az adott objektum pointerét, ezesetben a buffert. Majd a régit pedig
+            egyszerűen nullptr-re állítjuk. Ezt azért tehetjük meg, mert a kliens nem érzékeli, hogy
+            módosítás történt, erre csa akkor van lehetőség ha a rvalue referenciát kap a
+            konstruktor paraméterként. Ilyenkora konstrkutoron belül "akármit" megtehetünk, ameddig
+            az szementikának érvényes. </para>
+        <para>
+            <programlisting>        String(String&amp;&amp; other){        
+            std::cout&lt;&lt;"Move ctor\n";
+            m_Buffer = other.m_Buffer;
+            other.m_Buffer = nullptr;
+        }</programlisting>
+        </para>
+        <para>A mozgató operátor dolga az, hogy a régi  objektumhoz tartozó erőforrásokat törölje és
+            az újhoz pedig beszerezze a szükséges erőforrásokat. Ezt megtehetjük manuálisan, a
+            következő módon:
+            <programlisting>        String&amp; operator=(String&amp;&amp; other){
+            if(this != &amp;other){
+                delete m_Buffer;
+
+                m_Buffer = other.m_Buffer;
+                other = nullptr;
+            }      
+            return *this;
+        }</programlisting></para>
+        <para>Ekkor rvalue referenciaként kell megadni az objektumot. Magunknak kell feloldani a
+            Buffer átlal lefogalalt memóriát a delete függévénnyel, itt töröljük a lefogalat
+            erőforrásokat. Majd elvégezni a cserét, tehát az új Buffer lesz a régi, a régi pedig
+            nullptr, ez pedig az új erőforrások beszerzése rész.</para>
+        <para> A másik módszer az a ha használjuk a swap() függvényt. Itt nem rvalue paramétert vár
+            a függvény, mert a mozgató konstruktor fogja inicializálni. Ettől függetlenül rvalue-t
+            kell megadni mert a mozgató konstruktor azt várja. Ekkor a régi memória felszabadítása
+            automatikusan történik. Az régi és új pointert megcseréljük a swap() függvénnyel. És az
+            objektumra mutató *this pointert visszadjuk.
+            <programlisting>    String&amp; operator=(String other){          
+            std::swap(m_Buffer,other.m_Buffer); 
+            return *this;
+        }</programlisting><programlisting>int main(){
+    String string1 = "test";
+    std::cout&lt;&lt;"Az eredeti string: "&lt;&lt;string1&lt;&lt;std::endl;
+    String string2 = std::move(string1);
+    std::cout&lt;&lt;"A másolt string: "&lt;&lt;string2&lt;&lt;std::endl;
+    std::cout&lt;&lt;"Az eredeti string másolás után:  "&lt;&lt;string1&lt;&lt;std::endl;
+}</programlisting></para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/move2.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+    </section>
+    
+</chapter>                

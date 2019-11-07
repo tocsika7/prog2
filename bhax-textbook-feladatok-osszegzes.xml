@@ -1,0 +1,86 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Összegzés:</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+      
+        
+    <section>
+        <title>Passzolt feladatok:</title>
+                       <para>
+2 db az SMNIST for Humans kutatástámogatás értelmében: Mély MNIST és Minecraft-MALMÖ 
+</para>       
+<figure>
+  <title>Lvl. 9</title>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="Images/smnist.png" format="PNG"/>
+    </imageobject>
+  </mediaobject>
+</figure> 
+ 
+
+
+    </section>   
+    <section>
+        <title>Tutoriáltjaim:</title>
+        <para>         
+ Borvíz Róbert: Hangyaszimulációk <link xlink:href="https://github.com/BorvizRobi/prog_1_textbook"></link>        
+        </para> 
+        <para>         
+ Borvíz Róbert: A Mandelbrot halmaz:<link xlink:href="https://github.com/BorvizRobi/prog_1_textbook"></link>           
+        </para> 
+ 
+ 
+
+
+    </section>   
+    <section>
+        <title>Tutorok:</title>
+
+
+        <para>         
+ Borvíz Róbert: Decimálisból unárisba átváltó Turing-gép <link xlink:href="https://github.com/BorvizRobi/prog_1_textbook"></link>           
+        </para> 
+
+        <para>         
+ Borvíz Róbrt: C Exor Törő <link xlink:href="https://github.com/BorvizRobi/prog_1_textbook"></link>           
+        
+        </para>  
+        <para>         
+ Racs Tamás: Mozgató szemantika:<link xlink:href="https://gitlab.com/cant0r/bhax"></link>           
+        
+        </para>      
+
+
+    </section>      
+
+	<section>
+	<title> Licensz </title>
+	<para>
+	A nem saját programok forrásai a hozzájuk tartozó feladatban meg vannak említve.
+	</para>
+	<para> A saját programokra (amiknél jelenik meg forrás) a következő licensz érvényes:
+	</para>
+	<programlisting language="c"><![CDATA[
+	/*	
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program. If not, see <https://www.gnu.org/licenses/>.
+	*/
+	]]></programlisting>
+	</section>
+                        
+                   
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</chapter>                

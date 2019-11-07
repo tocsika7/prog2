@@ -1,0 +1,326 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+
+        <title>Helló, Chomsky!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>Encoding</title>
+        <para>Megoldás forrás:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/Encoding">https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/Encoding</link> </para>
+        <para>Tanulságok, tapasztalatok, magyarázat...</para>
+        <para>A feladat az volt, hogy a Mandelbort Halmaz nagyító programját fordítsuk és futtassuk
+            úgy, hogy mind a kódban és a fájlnévben meghagyjuk az ékezetes karaktereket. </para>
+        <para>Ha, ezt a szoksásos módon próbáljuk meg, akkor kapjuk a hibaüzeneteket, hogy az UTF-8
+            számára ismeretlen karaktereket tartalmaz a kódunk. </para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/encoding_errors.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <para>A javac dokumentációban látható, hogy a -encoding kapcsolóval lehet jelezni a
+            fordítónak, hogy nem a szokásos kódolással van dolga. </para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/encoding_doc.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <para>Ezt követően a wikipédián megkerestem, mi a magyar ékezetes karakterek kódolása. Ezek
+            a karakterek az ISO/IEC 8859-2 (Latin-2) karakterkészletében találhatóak meg.  </para>
+        <para>Az Oracle oldalán megnéztem, hogy a java.lang API-ban, ez hogyan van jelölve, majd az
+            encoding kapcsolónak így adtam meg és a program hiba nélkül fordult, futott. </para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/encoding_latin2.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/encoding_comp.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <figure>
+            <title>A program futásokor készített screenshot</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/encoding_Sc.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    	
+    </section>    
+    <section>
+        <title>Saját Leet Cipher</title>
+        <para> Megoldás forrása:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/leet.cpp">https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/leet.cpp</link> </para>
+        <para> Tanulságok, tapasztalatok, magyarázat...</para>
+        <para>A feladat az, volt hogy lexer használata nélkül írjunk egy programot ami átkonvertálja
+            a kapott szövegett leet szöveggé. </para>
+        <para>A leet osztály tartalmaz egy input stringet, ami tartalmazza a bekért szöveget,
+            illetve egy output string vektort, ami a konvertált szöveget tartalmazza. </para>
+        <para>A konvertálás a cipher függvényben zajlik. Itt az output vektoron referencia szerinti
+            átadást alkalmazunk hogy a későbbiekben visszakaphassuk a megváltozott értékét.
+            Transfrom() és toupper() metódusokkal a bekért stringet nagybetűvé konvertáljuk, hogy ne
+            kelljen különbséget tenni a kis- és nagybetű között. </para>
+        <para>Ezután végimegyünk az input string minden karakterén és a karakternek mefelelő leet
+            karaktert töltünk az output vektorba. A konstruktorban futtattjuk a cipher függvényt,
+            itt látható, hogy az output vector referenciával van megadva. </para>
+        <para>A main()-ben deklaráljuk az input stringet és az output vektort, illetve egy quit
+            striget és egy quit_b bool-t. Ezekkel a bekérés megszakítását végezzük el. A program
+            addig fut amíg a quit_b bool igaz. Minden konvertálás után megkérdezzük (bekérjük a
+            választ a quit stringre), akar-e még a felhasználó konvertálni. Ha igen a quit_bool
+            igazra állítjuk ha nem kilépünk. Maga a konvertálás rész, pedig a konstruktor
+            meghívásával hajtódik végre. </para>
+        <para>A
+            kód:<programlisting>#include &lt;vector>
+#include &lt;iostream>
+#include &lt;string.h>
+#include &lt;stdio.h>
+#include&lt;bits/stdc++.h> 
+
+using namespace std;
+
+class Leet{
+    
+public:
+    string input;
+    vector&lt;string> output;
+    vector&lt;string> cipher(string input, vector&lt;string>* output){
+        
+        transform(input.begin(), input.end(), input.begin(), ::toupper);
+       
+        for(int i=0;i&lt;input.length();i++)
+        {
+            switch (input.at(i)) {
+                case 'A' : output->push_back("4");
+                     break;
+                case 'B' : output->push_back("|3");
+                     break;
+                case 'C' : output->push_back("(");
+                     break;
+                case 'D' : output->push_back("|)");
+                     break;
+                case 'E' : output->push_back("3");
+                     break;
+                case 'F' : output->push_back("|=");
+                     break;
+                case 'G' : output->push_back("6");
+                     break;
+                case 'H' : output->push_back("|-|");
+                     break;
+                case 'I' : output->push_back("|");
+                     break;     
+                case 'J' : output->push_back(".]");
+                     break;
+                case 'K' : output->push_back("|&lt;");
+                     break;      
+                case 'L' : output->push_back("1");
+                     break;      
+                case 'M' : output->push_back("|Y|");
+                     break;
+                case 'N' : output->push_back("N");
+                     break;
+                case 'O' : output->push_back("0");
+                     break;
+                 case 'P' : output->push_back("P");
+                     break;
+                case 'Q' : output->push_back("Q");
+                     break;
+                case 'R' : output->push_back("|2");
+                     break;
+                case 'S' : output->push_back("5");
+                     break;
+                case 'T' : output->push_back("7");
+                     break;
+                case 'U' : output->push_back("|_|");
+                     break;                    
+                case 'V' : output->push_back("V");
+                     break;
+                case 'W' : output->push_back("W");
+                     break;                    
+                case 'X' : output->push_back("}{");
+                     break;                     
+                case 'Y' : output->push_back("'/");
+                     break;
+                case 'Z' : output->push_back("2");
+                     break;
+                case ' ' : output->push_back(" ");
+                     break;
+                case '0' : output->push_back("D");
+                     break;
+                case '1' : output->push_back("I");
+                     break;
+                case '2' : output->push_back("Z");
+                     break;
+                case '3' : output->push_back("E");
+                     break;
+                case '4' : output->push_back("A");
+                     break;
+                case '5' : output->push_back("S");
+                     break;
+                case '6' : output->push_back("b");
+                     break;
+                case '7' : output->push_back("T");
+                     break;
+                case '8' : output->push_back("B");
+                     break;
+                case '9' : output->push_back("g");
+                     break;
+            }
+        
+        
+        }
+        
+    return *output; 
+    }
+    
+    Leet(string input,vector&lt;string> &amp;output){
+        cipher(input,&amp;output);
+    }
+        
+    
+    };
+    
+    int main(){
+        vector&lt;string> output;
+        string input;
+        string quit;
+        bool quit_b =true;
+        
+        while(quit_b==true){
+            quit_b=false;
+            cout&lt;&lt;"Add meg a szöveget!\n";
+            cin>>input; 
+            
+            cout&lt;&lt;"A szöveg amit megadtál: "&lt;&lt;input&lt;&lt;"\n";
+            
+            Leet test(input,output);
+            cout&lt;&lt;"A leet-es szöveg:\n";
+            for(int i=0;i&lt;output.size();i++){
+                cout&lt;&lt;output.at(i);
+            }
+            cout&lt;&lt;"\n";
+            
+            cout&lt;&lt;"Folytatni akarod?(i/n)?\n";
+            cin>>quit;
+            if(quit=="i"){
+                output.clear();
+                quit_b=true;
+            }
+            else if(quit=="n"){
+                break;
+            }
+        
+        }
+    }
+
+</programlisting></para>
+        <para>A program futása:</para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/my_leet.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+    </section>    
+    
+     <section>
+         <title>Full Screen</title>
+         <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/FullScreen">https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/FullScreen</link>     </para> 
+        <para>Tanulások, tapasztalatok, magyarázat...</para>
+        <para>A feladat az volt, hogy keszítsünk egy Java programot, ami Full Screen-ben fut. </para>
+        <para>A megoldásra a Bátfai Norbert Tanár Úr által készített Labirintus játékot használtam.
+            A játék működéset nem részletezem,mert a feladatban csak a teljesképernyős módon van a
+            hangsúly. </para>
+        <para>A <emphasis role="bold">LabirintusJáték.java</emphasis> fájl kódrészleteinek
+            magyarázata:</para>
+        <para>Az osztály a java Frame osztályát egészíti ki, ami lényegében adja, az ablakos
+            rendszert. A GraphicsDevice osztályból példányostítunk egy objektumot. Ez az osztály
+            azokat a grafikus eszközöket adja meg, amelyek használhatóak az adott grafikus
+            környezethez. Ezeket a getLocalGraphicsEnviroment() metódussal kérjük le, az
+            alapértelmezett képernyőt pedi a getDefaulScreenDevice() metódussal. </para>
+        <programlisting>public class LabirintusJáték extends java.awt.Frame
+        implements Runnable {
+.
+.
+.
+java.awt.GraphicsDevice graphicsDevice;
+.
+.
+java.awt.GraphicsEnvironment graphicsEnvironment = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
+.
+.
+graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
+.
+.
+teljesKépernyősMód(graphicsDevice);</programlisting>
+        <para>A Full Screen beállítását a teljesKépernyősMód() metódusban végezzük el. A szélesség
+            és magasság változókat kinullázzuk, mert az ablaknak "nincsen kerete". A setResizable()
+            metódusal kikapcsoljuk az átméretehetőséget. Lekérdezzük támogatott-e a Full Screen mód,
+            ha igen, átadjuk a setFullScreenWindow() metódusnak a képernyő tulajdonságait. Ezt a
+            this referenciával adjuk át. A támogatott felbontásokat egy tömbbe kérjük le. Megnézzük
+            az adott felbontás támogatott-e, ha igen ezt állítjuk be a felbontásnak, ha nem kiírjuk,
+            hogy a felbontás nem lesz jó a játékhoz. </para>
+        <programlisting>    public void teljesKépernyősMód(java.awt.GraphicsDevice graphicsDevice) {
+        
+        int szélesség = 0;
+        int magasság = 0;
+        setUndecorated(true);
+        setIgnoreRepaint(true);
+        setResizable(false);
+        boolean fullScreenTamogatott = graphicsDevice.isFullScreenSupported();
+        if(fullScreenTamogatott) {
+            graphicsDevice.setFullScreenWindow(this);
+            java.awt.DisplayMode displayMode
+                    = graphicsDevice.getDisplayMode();
+            szélesség = displayMode.getWidth();
+            magasság = displayMode.getHeight();
+            int színMélység = displayMode.getBitDepth();
+            int frissítésiFrekvencia = displayMode.getRefreshRate();
+            System.out.println(szélesség
+                    + "x"  + magasság
+                    + ", " + színMélység
+                    + ", " + frissítésiFrekvencia);
+            java.awt.DisplayMode[] displayModes
+                    = graphicsDevice.getDisplayModes();
+            boolean dm1024x768 = false;
+            for(int i=0; i&lt;displayModes.length; ++i) {
+                if(displayModes[i].getWidth() == 1920
+                        &amp;&amp; displayModes[i].getHeight() == 1080
+                        &amp;&amp; displayModes[i].getBitDepth() == színMélység
+                        &amp;&amp; displayModes[i].getRefreshRate() 
+                        == frissítésiFrekvencia) {
+                    graphicsDevice.setDisplayMode(displayModes[i]);
+                    dm1024x768 = true;
+                    break;
+                }
+                
+            }
+            
+            if(!dm1024x768)
+                System.out.println("Nem megy az 1024x768, de a példa képméretei ehhez a felbontáshoz vannak állítva.");</programlisting>
+        <para><emphasis role="bold">A program futtatása: </emphasis></para>
+        <para><code>javac javattanitok/labirintus/*.java</code></para>
+        <para><code>javac javattanitok/LabirintusJáték.java</code></para>
+        <para><code>java javattanitok.LabirintusJáték labirintus.txt</code></para>
+        <para><emphasis role="bold">Futás 1920x1080-as felbontással: </emphasis></para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/fullscreen.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+     </section>
+    
+</chapter>                

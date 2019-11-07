@@ -1,0 +1,77 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Helló,Lauda!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>Port Scan </title>
+		<para>Megoldás forrása: </para>
+		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+        <para>Az argumentumként megadott IP címen található 1024 alatti TCP kapukkal létesítünk
+            kapcsolatot.Ehhez létrehozunk egy socket objektumot a java.net csomagból. Az első
+            paramétere lesz argumentumként megadott IP cím, a második pedig az adott portszám
+            1024-ig.</para>
+        <figure>
+            <title>Socket dokumentáció</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/socket_doc.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para> Kivétel akkor keletkezik, ha az adott porton van szerver folyamat a futás során. Ha
+            nincs kivtél csak a close() metódussal bezárjuk a socketet.</para>
+        <para>A program: </para>
+        <programlisting>public class KapuSzkenner {
+    
+    public static void main(String[] args) {
+        
+        for(int i=0; i&lt;1024; ++i)
+            
+            try {
+                
+                java.net.Socket socket = new java.net.Socket(args[0], i);
+                
+                System.out.println(i + " figyeli");
+                
+                socket.close();
+                
+            } catch (Exception e) {
+                
+                System.out.println(i + " nem figyeli");
+                
+            }
+    }   
+}</programlisting>
+        <figure>
+            <title>Futás 15 porttal:</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/port_scan.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>        
+
+
+
+
+	<section>
+	<title>AOP</title>
+	<para>Megoldás forrása: </para>
+		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+	</section>  
+
+	<section>
+	<title>JUnit teszt</title>
+        <para> Megoldás forrása:  </para>
+        <para>
+            Tanulságok, tapasztalatok, magyarázat...
+        </para>
+	</section>       
+        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</chapter>                

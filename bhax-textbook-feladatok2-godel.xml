@@ -1,0 +1,255 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+
+        <title>Helló, Gödel!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>Gengszterek</title>
+        <para>Megoldás forrás: </para>
+        <para>Tanulságok, tapasztalatok, magyarázat...</para>
+        <para>Lambda kifejezéssel ideiglenes függvényeket írhatunk, a hagyományos függényírás
+            helyett. </para>
+        <para>Általános
+            szintaxisa:<programlisting>[ captures ] ( params ) { body } </programlisting></para>
+        <para>Részei:<itemizedlist>
+                <listitem>
+                    <para>[]: A capture részben adhatunk meg változókat, objektumokat, amiket majd a
+                        kifejezésben használunk. Ezt megtehetjük csak a változók felsorolásával,
+                        vagy átadhatunk "mindent". [=] használatakor ez másolással, [&amp;]- val
+                        pedig referenciaként történik. </para>
+                </listitem>
+                <listitem>
+                    <para>( params ): Itt azokat a paraméterekt adjuk meg, amiket a függvény
+                        használ. </para>
+                </listitem>
+                <listitem>
+                    <para>{body}: Ez a rész pedig maga a függvényben végrehajtódó kód. </para>
+                </listitem>
+            </itemizedlist></para>
+        <para>A feladat az volt, hogy az OOCWC programban mutassuk be mikét használ a program a
+            Gengszterek rendezésénél Lambda kifejezést. </para>
+        <para>A programban a Gengszterek egy vektorban vannak elhelyezve, erre alkalmazzuk a sort
+            függvényt. A sort függvénynek a harmadik paramétere maga a függvény, ami az elemek
+            összehasonlítását végzi, a lambda kifejezést itt fogjuk haszználni, mert saját hasonlító
+            függvényre van szükség. A captures részben megadjuk a this pointerrel magát a
+            gengszereket tartalmazó vektort, illetve egy cop paramétert. Függvényparaméterként
+            használunk két Gengszer objektumot, amiket hasonlítani fogunk. Ezekre hívjuk a dst
+            függvényt, ami azt adja vissza, hogy a gráfon milyen távol vannak a cop-tól. Ennek a
+            távolságnak a mértéke alapján hasonlítjuk a két Gengszter objektumot. Ez lezajlik a
+            vektor minden elemén és a cop-tól való távolság szerint fognak rendeződni növekvő
+            sorrendben.
+            <programlisting>std::sort (gangsters.begin(), gangsters.end(), [this,cop](Gangster x,Gangster y)
+{
+    return dst(cop,x.to) &lt; dts(cop,y.to);
+} );</programlisting></para>
+    	
+    </section>    
+    <section>
+        <title>Alternatív tabella rendezése</title>
+        <para> Megoldás forrása:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/G%C3%B6del">GitLab</link> </para>
+        <para> Tanulságok, tapasztalatok, magyarázat...</para>
+        <para>Az alternatív tabella egy a labdarúgró bajnokságokhoz egy olyan pontozási rendszer,
+            ami a hagyományos tabellával ellentétben figyelembe veszi, a két csapat közti erősségi
+            viszonyt. </para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/kereszttabla.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <para>A megadott kereszttábla alapján a következőek a pontozások:<itemizedlist>
+                <listitem>
+                    <para>üres: 0</para>
+                </listitem>
+                <listitem>
+                    <para>zöld: 1</para>
+                </listitem>
+                <listitem>
+                    <para>sárga: 2</para>
+                </listitem>
+                <listitem>
+                    <para>piros: 3</para>
+                </listitem>
+            </itemizedlist></para>
+        <para>A kereszttábla pontjait a Wiki2Matrix programban megadjuk egy Mátrixban, és a program
+            futásakor egy linkmátrixot kapunk, amit megadunk az AlternativTabella programnak. A
+            program pontszámítási része nem volt feladat, csak az hogy miként használja a
+            Comparable&lt;T> interfészt. </para>
+        <para>A Comparable&lt;T> interfész egyetlen metódust a compareTo(T obj) metódust
+            tartalmazza. A paramétere az adott objektumtípus amit szeretnénk összehasoníltani. A
+            program esetében ez a csapat objeketum. A visszatérési értéke egy integer, az alapján
+            hogy milyen a két objektum viszonya. <itemizedlist>
+                <listitem>
+                    <para>Ha az első kisebb mint a második akkor: negatív integer</para>
+                </listitem>
+                <listitem>
+                    <para>Ha egyenlőek akkor: 0</para>
+                </listitem>
+                <listitem>
+                    <para>Ha az első nagyobb mint a második akkor: pozitív integer</para>
+                </listitem>
+            </itemizedlist> A programban ez a következőképpen van jelen: A Csapat osztály
+            implementálja a Comparable interfészt,a compareTo() metódusok pedig a csabat obejekumok
+            érték tagját fogja egymáshoz viszonyítani.
+            <programlisting>class Csapat implements Comparable&lt;Csapat> {
+
+  protected String nev;
+  protected double ertek;
+
+  public Csapat(String nev, double ertek) {
+    this.nev = nev;
+    this.ertek = ertek;
+  }
+
+  public int compareTo(Csapat csapat) {
+    if (this.ertek &lt; csapat.ertek) {
+      return -1;
+    } else if (this.ertek > csapat.ertek) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+}</programlisting></para>
+        <para>Erre az interfészre a következő sorok miatt is szükségünk van.
+            <programlisting>    java.util.List&lt;Csapat> rendezettCsapatok = java.util.Arrays.asList(csapatok);	
+    java.util.Collections.sort(rendezettCsapatok);</programlisting></para>
+        <para>Az első sorban még nincsen probélma, itt létrehozunk egy listát, fontos megjegyezni
+            hogy ez az adatszerkezet is a Collection interface-t egészíti ki. Ebbe a listába a
+            csapatokat tömbjét fogjuk konvertálni az Arrays.asList() metódus segítségével. </para>
+        <para>A Comparable&lt;T> interfész a második sor miatt is szükséges. A sort() metódussal
+            listákat rendezhetünk a természetes sorrendjük alapján. Ezt a természetes rendezés a
+            Comparable&lt;T> interfész által létrehozott rendezés, tehát a sort() a Comparable
+            interfészt egészíti ki, ezért kell nekünk is implementálni.  </para>
+        <figure>
+            <title>A program futása a 2019/20-as magyar bajnokság eddigi állása alapján</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/alttab2019.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>
+    <section>
+        <title>Gimp Scheme hack</title>
+        <para>Megoldás forrása:<link xlink:href="https://gitlab.com/nbatfai/bhax/tree/master/attention_raising/GIMP_Lisp">Bátfai Norbert GitLab</link> </para> 
+        <para>Tanulásgok, tapasztalatok, magyarázat...</para>
+        <para><emphasis role="bold">Króm effekt:</emphasis></para>
+        <para> A program első részében deklarálunk néhány függvényt: A color-curve függvényben
+            eltárolunk egy tömbben 8 értéket, amik a GIMP színgörbéjének bizonyos értékei. Az elem
+            függvénnyel az kérjük le egy listáról, hogy a megadott elem hányadik. A lisp-ben a
+            változók lehetnek listák tehát több elemük is lehet. A wh függvényben az adott szöveg
+            magasságát és szélességét kérjük le. </para>
+        <para>Létrehozzuk a chrome függvényt amelynek a paraméterei: </para>
+        <itemizedlist>
+            <listitem>
+                <para>szöveg</para>
+            </listitem>
+            <listitem>
+                <para>betűtípus</para>
+            </listitem>
+            <listitem>
+                <para>betűméret</para>
+            </listitem>
+            <listitem>
+                <para>szélesség</para>
+            </listitem>
+            <listitem>
+                <para>magasság</para>
+            </listitem>
+            <listitem>
+                <para>szín</para>
+            </listitem>
+            <listitem>
+                <para>színátmenet</para>
+            </listitem>
+        </itemizedlist>
+        <para> A további részekben lépésenként haladunk a szöveg változtatásával amelyek a
+            következők: </para>
+        <itemizedlist>
+            <listitem>
+                <para>1: Létrehozzuk egy fekte háttérréteget egy fehér középre tolt
+                    szöveggel.</para>
+            </listitem>
+            <listitem>
+                <para>2: Egy erős gauss elmosódást rakunk a képre.</para>
+            </listitem>
+            <listitem>
+                <para>3: A szinek határszintjének alsó és felső határának megváltoztatásával
+                    élesítünk az elmosódott képen.</para>
+            </listitem>
+            <listitem>
+                <para>4: Újra alakalmazzuk a gauss elomsást.</para>
+            </listitem>
+            <listitem>
+                <para>5: Szín szerinti kijelöléssel kijelöljük a fekete területet. </para>
+            </listitem>
+            <listitem>
+                <para>6: Létrehozunk majd kijelölünk egy átlásztó réteget.</para>
+            </listitem>
+            <listitem>
+                <para>7: Az előbb létrehozott átlásztó réteget kitöljük egy sötétszürkéből
+                    világosszürkébe való színátmenettel. </para>
+            </listitem>
+            <listitem>
+                <para>8: Bucka leképezést alkalmazunk a második réteget az első réteg használatával.
+                </para>
+            </listitem>
+            <listitem>
+                <para>9: A színgörbéket módosítjuk, ezeken egy hullám mintát állítunk be. </para>
+            </listitem>
+        </itemizedlist>
+        <para>A program végén elmentjük a GIMP menüjébe a scriptet és adunk neki alapértelmezett
+            paramétereket. </para>
+        <para><inlinemediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/chrome.png"/>
+                </imageobject>
+            </inlinemediaobject></para>
+        <para><emphasis role="bold">Mandala</emphasis>:</para>
+        <para> A programot néhány függvény deklarálásával kezdjük. Fontos megjegyezni, hogy lisp-ben
+            a változók listák tehát egyszerre több elemük is lehet. Az elem függvénnyel azt kérjük
+            le egy listáról, hogy a megadott elem hányadik.Lekérjük a szöveg szélességét a
+            text-width függvénnyel. Alapból a beépített gimp függvény több értéket ad vissza, ezért
+            használjuk a car függvényt, hogy csak a a legelső a paramétert adjuk vissza tehát a
+            szélességét. A text-wh függvénnyel egy hasonló módszerrel egy listába lekérjük az adott
+            szöveg szélességét és magasságát. </para>
+        <para> A mandala script definiálása 8 paraméterrel, amik a következők: szöveg amiből készül,
+            szöveg középen, betűtípus, betű méret, szélesség, magasság, szöveg színének RGB kódja,
+            színátmenet. A lisp-ben a változókat a let* függvény segítségével definiáljuk. RGB képet
+            hozunk létre a megadott szélességgel és magassággal.Elkészítjük a háttérréteget illetve
+            a szükséges szövegeket. Beállítunk egy előtérszínt amivel a hátteret kitöltjük, majd
+            értékül adjuk neki a paraméterként kapott színt. Beállítjuk ezen kívül a betűméretet és
+            betűsítlust. </para>
+        <itemizedlist>
+            <listitem>
+                <para> Elforgatjuk a szövegeket úgy hogy a pi adott hatványaival szorozzuk
+                    fokszámukat. </para>
+            </listitem>
+            <listitem>
+                <para> Elipszis kivágásokkal létrehozzuk a kereteket. </para>
+            </listitem>
+            <listitem>
+                <para> Beállítjuk a színátmenet, majd létrehozzuk a középen elhelyezett szöveget.
+                </para>
+            </listitem>
+            <listitem>
+                <para> Regisztráljuk a GIMP fájlmenüjébe a scriptet és beállítunk alapértelmezett
+                    paramétereket. </para>
+            </listitem>
+        </itemizedlist>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/mandala.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+    </section>
+    
+</chapter>                
