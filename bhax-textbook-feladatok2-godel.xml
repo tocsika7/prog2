@@ -94,7 +94,7 @@
                     <para>Ha az első nagyobb mint a második akkor: pozitív integer</para>
                 </listitem>
             </itemizedlist> A programban ez a következőképpen van jelen: A Csapat osztály
-            implementálja a Comparable interfészt,a compareTo() metódusok pedig a csabat obejekumok
+            implementálja a Comparable interfészt,a compareTo() metódusok pedig a csapat obejekumok
             érték tagját fogja egymáshoz viszonyítani.
             <programlisting>class Csapat implements Comparable&lt;Csapat> {
 
