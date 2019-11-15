@@ -9,10 +9,10 @@
     <section>
         <title>Port Scan </title>
 		<para>Megoldás forrása: </para>
-		<para>Tanulságok, tapasztalatok, magyarázat: </para>
-        <para>Az argumentumként megadott IP címen található 1024 alatti TCP kapukkal létesítünk
-            kapcsolatot.Ehhez létrehozunk egy socket objektumot a java.net csomagból. Az első
-            paramétere lesz argumentumként megadott IP cím, a második pedig az adott portszám
+        <para>Tanulságok, tapasztalatok, magyarázat:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/lauda/KapuSzkenner.java">GitLab</link> </para>
+        <para>A programban az argumentumként megadott IP címen található 1024 alatti TCP kapukkal
+            létesítünk kapcsolatot.Ehhez létrehozunk egy socket objektumot a java.net csomagból. Az
+            első paramétere lesz argumentumként megadott IP cím, a második pedig az adott portszám
             1024-ig.</para>
         <figure>
             <title>Socket dokumentáció</title>
@@ -23,7 +23,9 @@
             </mediaobject>
         </figure>
         <para> Kivétel akkor keletkezik, ha az adott porton van szerver folyamat a futás során. Ha
-            nincs kivtél csak a close() metódussal bezárjuk a socketet.</para>
+            nincs kivétél csak a close() metódussal bezárjuk a socketet. A kivételkezelés szerepe
+            itt az, hogy ha nem kezelnénk azt, hogy az adott porton nincs szerver folyamat,
+            egyszerűen leállna a program és nem tudnánk végigfuttatni a scan-t.</para>
         <para>A program: </para>
         <programlisting>public class KapuSzkenner {
     
@@ -47,7 +49,7 @@
     }   
 }</programlisting>
         <figure>
-            <title>Futás 15 porttal:</title>
+            <title>Futás:</title>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="Images/port_scan.png"/>
@@ -61,16 +63,124 @@
 
 	<section>
 	<title>AOP</title>
-	<para>Megoldás forrása: </para>
+	    <para>Megoldás forrása:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/lauda/AOP">GitLab</link>  </para>
 		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+        <para>A feladat az volt, hogy írjunk bele egy átszövő vonatkoztatást az LZWBinfa Java
+            átíiratába. Ehhez használnunk kell valamilyen aspektus orientált paradigmát. Az aspektus
+            orientált programozás, egy olyan paradigma, amivel lehetőségünk arra, hogy a kódot egy
+            külső forrásból módosítsuk úgynevezetett "pointcutok" segítségével.A programkódban join
+            point-ok mutatatják azt , hogy mely részei a programnak vannak saját, illetve külön
+            modulban.A pointcut pedig ezeket a join point-okat jelöli a program végrehajtásában. Ez
+            nyilván akkor hasznos,ha egy kész programon akarunk változatásokat végrehajtani és nem
+            akarunk egy esetlegesen hibás kódot beleírni.</para>
+        <para>A feladat végrehajtásához AspectJ-t használtam, ami a Java-hoz a legelterjedtebb
+            aspektus orientált kiegészítő. Feladatként azt választottam, hogy a kiir() függvény
+            inorder helyett postorder módon fogja kiírni a binfát. A kódot egy .aj fájlban írjuk, ez
+            az AspectJ kiterjesztése. A program egy privileged aspcet-ben van, erre azért van
+            szükség hogy a private tagokat is elérje. Ebben az esetben például a mélységet, ami a
+            Csomopont osztályban egy private tag. Az around() al helyettesíthetjük azt a
+            függvényhívást amit utána írunk, a függvényhívást pointcuttal adjuk meg, ebben az
+            esetben target és call pointcuttal. A target olyan join pointokra fog match-elni amit
+            megadunk paraméterként, itt f-et adunk meg ami az LZWBinfa objektum. A call és az args
+            együtt adják meg a függvényt amit helyettesíteni akarunk, a call-nál megadjuk a
+            paraméterek típusát az argsnál pedig a nevét és erre keres majd egyezést a program. Itt
+            a kiir metódust akarjuk helyettesíteni, aminek a paraméterei a Csomopont típusú elem
+            illetve az Java output stream. Innentől már csak annyi a teendő hogy a metódusban
+            kicseréljük a kiir() metódushívásait a postorder-nek megfelelően, tehát először az egyes
+            majd a nullás gyermekek és végül pedig a gyökér. </para>
+        <para>
+            <programlisting>privileged aspect BinfaAspect{
+
+    void around (LZWBinFa.Csomopont elem, java.io.PrintWriter os , LZWBinFa f) :
+    target (f) &amp;&amp; call (void kiir (LZWBinFa.Csomopont,java.io.PrintWriter)) &amp;&amp; args(elem,os)
+    {
+      if (elem != null) {
+      ++f.melyseg;
+      f.kiir(elem.egyesGyermek(), os);
+      f.kiir(elem.nullasGyermek(), os);
+      for (int i = 0; i &lt; f.melyseg; ++i) {
+    
+        os.print("---");
+      }
+      os.print(elem.getBetu());
+      os.print("(");
+      os.print(f.melyseg - 1);
+      os.println(")");
+      --f.melyseg;
+    }
+
+    }
+}</programlisting>
+        </para>
+        <figure>
+            <title>Futtatás</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/aop_run.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <figure>
+            <title>Az eredeti inorder és az AspectJ-s postorder kiiratás</title>
+            <para><mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/aop.png"/>
+                </imageobject>
+            </mediaobject></para>
+        </figure>
 	</section>  
 
 	<section>
 	<title>JUnit teszt</title>
-        <para> Megoldás forrása:  </para>
+	    <para> Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/lauda/LZWBinFaTest.java">GitLab</link>  </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
         </para>
+        <para>A feladat az volt, hogy az LZWBinfa Java átiratához a mélységet és szórást kiszámoló
+            függvénykhez írjunk JUnit testet. Tesztelés során lehetőségünk van arra, hogy
+            ellenőrizzük, hogy a programunk bizonyos helyzetekben jól műkdöik-e. Nem teljes tesztet
+            végzünk a kódon, hanem Unit testet, ami annyiban tér el, hogy csak a kód bizonyos kisebb
+            részeit például függvényeket vagy osztályokat tesztel. A feladatban a Java JUnit
+            framework-jét használjuk a teszteléshez. </para>
+	    <para>A teszteléshez a <link
+                xlink:href="https://progpater.blog.hu/2011/03/05/labormeres_otthon_avagy_hogyan_dolgozok_fel_egy_pedat"
+                >progpater</link> -en található értékeket használtam. A kódban először importáljuk a
+            szükséges library-ket, készítünk egy Binfa objektumot. Egy Stringben tároljuk el,a Test
+            inputot, amit a toCharArray() metódussal először egyenként berakunk egy char-ba és onnan
+            továbbítjuk az egyBitFeldolg() metódusnak, mert az csak char-onként tudja kezelni a
+            bemenetet. Ezt követően az assertEquals() metódussal fogjuk tesztelni a mélységet és a
+            szórást. Itt paraméterként először beállítjuk az értéket amit várunk, ezt követően a
+            tényleges értéket, amit kapni fogunk a getMelyseg() és getSzoras() metódusokból.
+            Harmadik paraméternek pedig egy delta értéket állítunk be,ami lényegében az első két
+            érték közötti maximális különbség. Az assertEquals() azt nézi meg hogy az első két
+            paraméter deltán belüli eltéréssel megegyezik-e. </para>
+        <para>A
+            kód:<programlisting>import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+public class LZWBinFaTest {
+    LZWBinFa binfa = new LZWBinFa();
+
+    @Test
+    public void BinfaTest(){
+        
+        String input ="01111001001001000111";
+ 
+        for(char input_char : input.toCharArray()){
+            binfa.egyBitFeldolg(input_char);
+        }
+        assertEquals(4,binfa.getMelyseg(),0.0);
+        assertEquals(0.957427,binfa.getSzoras(),0.0001);
+    }
+}</programlisting></para>
+        <figure>
+            <title>Sikeres teszt</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/junit_run.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
 	</section>       
         
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
