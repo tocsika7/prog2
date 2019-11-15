@@ -10,7 +10,7 @@
     <section>
         <title>Liskov helyettesítés sértése</title>
 		
-        <para><emphasis role="bold"> Megoldás forrása: </emphasis></para>
+        <para><emphasis role="bold"> Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Liskov/Helyettesites_sertese">GitLab</link>  </emphasis></para>
         <para><emphasis role="bold">Tanulások, tapasztalok, magyarázat...</emphasis></para>
         <para>A Liskov elv szerint az objektumorientált programozási nyelvekben, ha T-nek egy
             altípusa S, akkor amelyik programrészben a T-t használjuk probléma nélkül
@@ -103,7 +103,7 @@ int main ( int argc, char **argv )
     <section>
         <title>Szülő-gyerek</title>
         <para>
-            Megoldás forrása:
+            Megoldás forrása:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Liskov/Szulo_gyerek">GitLab</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
@@ -179,8 +179,8 @@ return 0;
      <section>
          <title>Ciklomatikus komplexitás</title>
         <para>A ciklomatikus komplexitás Thomas J. McGabe nevéhez fűződik. A kódunk komplexitására
-            ad egy mértéket, annak alapján hogy lehetséges elágazás van benne. Kézileg, gráffal kell
-            ábrázolunk a programot ésa következő képletet kell használnunk:</para>
+            ad egy mértéket, annak alapján hogy hány lehetséges elágazás van benne. Kézileg, gráffal
+            kell ábrázolunk a programot és a következő képletet kell használnunk:</para>
         <para><emphasis>M = E - N + 2P</emphasis> ahol: </para>
          <itemizedlist>
              <listitem>
@@ -210,6 +210,7 @@ return 0;
         <title>Anti OO</title>
         <para>A mérést Ubuntu 64 bites virtuális gépen végeztem, 8 GB RAM-al és Intel i5 1.6 Ghz-es
             processzorral. </para>
+        <para>Forrás: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Liskov/Anti_OO">GitLab</link> </para>
         <table frame="all">
             <title>Mérési eredmények táblázatba gyűjtve:</title>
             <tgroup cols="5">
@@ -258,8 +259,7 @@ return 0;
             objektumorientáltságot, két metóduson kívül, minden kód a main-be került és így a Java
             bizonyult gyorsabbnak. </para>
         <para><emphasis role="bold">Használt kódok a futási eredményekkel:</emphasis></para>
-        <para><emphasis role="bold"
-            >C</emphasis><programlisting>#include &lt;stdio.h>
+        <para><emphasis role="bold">C</emphasis><programlisting>#include &lt;stdio.h>
 #include &lt;math.h>
 #include &lt;time.h>
 /*
@@ -465,8 +465,7 @@ main(){
                 </imageobject>
             </mediaobject>
         </informalfigure>
-        <para><emphasis role="bold"
-            >C#</emphasis><programlisting>/*
+        <para><emphasis role="bold">C#</emphasis><programlisting>/*
  * FileName: PiBBPBench.cs
  * Author: Bátfai Norbert, nbatfai@inf.unideb.hu
  * DIGIT 2005, Javat tanítok
