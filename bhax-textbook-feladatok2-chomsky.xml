@@ -9,7 +9,7 @@
 
     <section>
         <title>Encoding</title>
-        <para>Megoldás forrás:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/Encoding">https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/Encoding</link> </para>
+        <para>Megoldás forrás:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/Encoding">GitLab</link> </para>
         <para>Tanulságok, tapasztalatok, magyarázat...</para>
         <para>A feladat az volt, hogy a Mandelbort Halmaz nagyító programját fordítsuk és futtassuk
             úgy, hogy mind a kódban és a fájlnévben meghagyjuk az ékezetes karaktereket. </para>
@@ -61,7 +61,7 @@
     </section>    
     <section>
         <title>Saját Leet Cipher</title>
-        <para> Megoldás forrása:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/leet.cpp">https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/leet.cpp</link> </para>
+        <para> Megoldás forrása:<link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/leet.cpp">GitLab</link> </para>
         <para> Tanulságok, tapasztalatok, magyarázat...</para>
         <para>A feladat az, volt hogy lexer használata nélkül írjunk egy programot ami átkonvertálja
             a kapott szövegett leet szöveggé. </para>
@@ -235,8 +235,11 @@ public:
     </section>    
     
      <section>
-         <title>Full Screen</title>
-         <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/FullScreen">https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/FullScreen</link>     </para> 
+        <title>Full Screen</title>
+        <para>Megoldás forrása: <link
+                xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/Chomsky/FullScreen"
+                >GitLab</link>
+        </para>
         <para>Tanulások, tapasztalatok, magyarázat...</para>
         <para>A feladat az volt, hogy keszítsünk egy Java programot, ami Full Screen-ben fut. </para>
         <para>A megoldásra a Bátfai Norbert Tanár Úr által készített Labirintus játékot használtam.
@@ -248,7 +251,7 @@ public:
             rendszert. A GraphicsDevice osztályból példányostítunk egy objektumot. Ez az osztály
             azokat a grafikus eszközöket adja meg, amelyek használhatóak az adott grafikus
             környezethez. Ezeket a getLocalGraphicsEnviroment() metódussal kérjük le, az
-            alapértelmezett képernyőt pedi a getDefaulScreenDevice() metódussal. </para>
+            alapértelmezett képernyőt pedig a getDefaulScreenDevice() metódussal. </para>
         <programlisting>public class LabirintusJáték extends java.awt.Frame
         implements Runnable {
 .
@@ -267,9 +270,13 @@ teljesKépernyősMód(graphicsDevice);</programlisting>
         <para>A Full Screen beállítását a teljesKépernyősMód() metódusban végezzük el. A szélesség
             és magasság változókat kinullázzuk, mert az ablaknak "nincsen kerete". A setResizable()
             metódusal kikapcsoljuk az átméretehetőséget. Lekérdezzük támogatott-e a Full Screen mód,
-            ha igen, átadjuk a setFullScreenWindow() metódusnak a képernyő tulajdonságait. Ezt a
-            this referenciával adjuk át. A támogatott felbontásokat egy tömbbe kérjük le. Megnézzük
-            az adott felbontás támogatott-e, ha igen ezt állítjuk be a felbontásnak, ha nem kiírjuk,
+            ha igen,ezt az isFullScreenSupported() metódussal teszzük.Ha támogatott akkor átadjuk a
+            setFullScreenWindow() metódusnak a képernyő tulajdonságait. Ezt a this referenciával
+            adjuk át. A támogatott felbontásokat egy tömbbe kérjük le.A képernyő tulajdonságait mint
+            a szélesség, magasság, színmélység, bitmélység és frissitési frekvenica változókban
+            tárljuk el, és ezeket a tulajdonságokat majd megjelenítjük a képernyő sarkában. A
+            támogatott felbonásokat egy tömbben tároljuk el. Megnézzük az adott felbontás
+            támogatott-e (itt 1920x1080), ha igen ezt állítjuk be a felbontásnak, ha nem kiírjuk,
             hogy a felbontás nem lesz jó a játékhoz. </para>
         <programlisting>    public void teljesKépernyősMód(java.awt.GraphicsDevice graphicsDevice) {
         
@@ -321,6 +328,7 @@ teljesKépernyősMód(graphicsDevice);</programlisting>
                 </imageobject>
             </mediaobject>
         </informalfigure>
-     </section>
+    </section>
     
 </chapter>                
+<?oxy_options track_changes="on"?>
