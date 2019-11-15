@@ -9,7 +9,7 @@
 
     <section>
         <title>Gengszterek</title>
-        <para>Megoldás forrás: </para>
+        <para>Megoldás forrás:<link xlink:href="https://github.com/nbatfai/robocar-emulator/blob/master/justine/rcemu/src/myshmclient.cpp">Bátfai Norbert GitHub</link></para>
         <para>Tanulságok, tapasztalatok, magyarázat...</para>
         <para>Lambda kifejezéssel ideiglenes függvényeket írhatunk, a hagyományos függényírás
             helyett. </para>
@@ -23,7 +23,7 @@
                         pedig referenciaként történik. </para>
                 </listitem>
                 <listitem>
-                    <para>( params ): Itt azokat a paraméterekt adjuk meg, amiket a függvény
+                    <para>( params ): Itt azokat a paramétereket adjuk meg, amiket a függvény
                         használ. </para>
                 </listitem>
                 <listitem>
@@ -126,6 +126,14 @@
             listákat rendezhetünk a természetes sorrendjük alapján. Ezt a természetes rendezés a
             Comparable&lt;T> interfész által létrehozott rendezés, tehát a sort() a Comparable
             interfészt egészíti ki, ezért kell nekünk is implementálni.  </para>
+        <figure>
+            <title>sort metódus JDK leírás</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/sort_jdk.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
         <figure>
             <title>A program futása a 2019/20-as magyar bajnokság eddigi állása alapján</title>
             <mediaobject>
