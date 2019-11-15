@@ -19,21 +19,26 @@
 			source/labor/polargen)</para>
         <para><emphasis role="bold"> Megoldás forrása: </emphasis></para>
     	<para>
-    		Java: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator.java">https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator.java</link>  
-    	</para>
+			<link
+				xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator.java"
+				>GitLab Java</link>
+		</para>
     	<para>
-    		C++: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator_C++">https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator_C++ </link>
-    	</para>
+			<link
+				xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/PolarGenerator_C++"
+				>GitLab C++</link>
+		</para>
         <para>
 			<emphasis role="bold">Tanulságok, tapasztalatok, magyarázat... </emphasis></para>
 		<para>A polártranszformációs algoritmus fontos jellemzője, hogy egy számítási lépéssel két
-			normális eloszlású számot állít elő. Ez azért jó, mert minden páratlanadik meghívásnál
-			nem kell újraszámolnunk, csak visszaadni az előző lépés másik számát. </para>
+			normális eloszlású számot állít elő. Ez azért fontos, mert minden páratlanadik
+			meghívásnál nem kell újraszámolnunk, csak visszaadni az előző lépés másik előre
+			kiszámolt számát. </para>
 		<para><emphasis role="bold">Java megoldás: </emphasis></para>
-		<para>Az egész programot Java-nak megfelelően egy PolarGenerator osztályba írjuk. Ennek tagjai a
+		<para>A programot Java-nak megfelelően egy PolarGenerator osztályba írjuk. Ennek tagjai a
 			nincsTarolt és tarolt változók, amik az tartalmazzák hogy van-e tárolt szám, és ha van
-			mi az. Tartalmaz egy konstruktort, amiben igazra állítjuk, hogy kezdésnek nincsen tárolt
-			szám.
+			mi az. Az osztály tartalmaz továbbá egy konstruktort, amiben igazra állítjuk, hogy
+			kezdésnek nincsen tárolt szám.
 			<programlisting>public class PolarGenerator {
 
 	boolean nincsTarolt = true; 
@@ -42,13 +47,13 @@
 	public PolarGenerator() {
 		nincsTarolt = true;
 	}</programlisting></para>
-    	<para> Maga a matematikai rész a kovetkezo() metódusban zajlik. Ha nincs nincs tárolt
-			szám,akkor lezajlik a szám generálás, a második érték bekerül a tarolt változóba és
-			nincsTarolt változó hamisra vált, az első értéket pedig kapjuk visszatérési értékként.
-			Ha van tárolt szám akkor a nincsTarolt-at negáljuk és a metódus visszaadja a tárolt
-			számot, és nem generálunk új számot. A main-ben példányosítunk egy PolarGenerator
-			objektumot, majd egy for ciklusban használjuk a kovetkezo() metódust a számok
-			generálására. </para>
+    	<para> Maga a polártranszformációs algoritmus matematikai része a kovetkezo() metódusban
+			zajlik. Ha nincs nincs tárolt szám,akkor lezajlik a szám generálás és a második érték
+			bekerül a tarolt változóba, nincsTarolt változó hamisra vált, az első értéket pedig
+			kapjuk visszatérési értékként. Ha van tárolt szám akkor a nincsTarolt-at negáljuk és a
+			metódus visszaadja a tárolt számot, és nem generálunk új számot. A main-ben
+			példányosítunk egy PolarGenerator objektumot, majd egy for ciklusban használjuk a
+			kovetkezo() metódust a számok generálására. </para>
 		<programlisting>	public double kovetkezo(){
 		if(nincsTarolt){
 			double u1,u2,v1,v2,w;
@@ -82,10 +87,10 @@
 				</imageobject>
 			</inlinemediaobject></para>
     	<para><emphasis role="bold"> C++ megoldás: </emphasis></para>
-		<para>A C++ verzióban a PolarGen osztályt header fájlba írjuk. Az osztály public részében
+		<para>A C++ verzióban a PolarGen osztályt egy header fájlba írjuk. Az osztály public részében
 			tartalmaz egy konstruktort ami beállítja, hogy nincs tárolt változó kezdésnek, illetve
-			meghívja a srand() függvényt amire a matematikai algoritmus során lesz szükség, random
-			szám generáláshoz. Tartalmaz egy destruktort illetve, deklarálja a kovetkezo()
+			meghívja a srand() függvényt amire a polártranszformációs algoritmus során lesz szükség,
+			random szám generáláshoz. Tartalmaz egy destruktort illetve, deklarálja a kovetkezo()
 			függvényt. A számtároláshoz szükséges változókat az osztály private részébe írjuk, mert
 			nincs szükség rá, hogy közvetlenül el legyenek érve, elég csak a kovetkezo() függvényen
 			keresztül. </para>
@@ -178,7 +183,7 @@ int main(int argc,char **argv)
 	<title>"Gagyi"</title>
 	<para>Megoldás forrása:<link
 					xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Gagyi"
-					>https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Gagyi</link>
+					>GitLab</link>
 		</para>
 		<para> Program, ami lefagy: </para>
 		<programlisting>
@@ -237,7 +242,7 @@ public class Gagyi3
 	<section>
 	<title>Yoda</title>
         <para>
-            Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Yoda.java">https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Yoda.java</link>           
+            Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Arroway/Yoda.java">GitLab</link>           
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
@@ -250,8 +255,8 @@ public class Gagyi3
 	Az ilyen típusú utasítással elkerülhetünk például bizonyos NullPointer hibákat. 
 	</para>
 	<para> Az alábbi program a szokásos if utasítás sorrendet használva NullPointer hibát ad. Ez azért
-			van mert, az objektum amit hasonlítani akarunk nem az equals() metódussal az nem lehet
-			null referencia</para>
+			van mert, az equals() metuódus azon paramétere amihez hasonlítunk nem lehet null
+			érték.</para>
 	<programlisting>
 	public class Yoda{
 		public static void main(String[] args) {
@@ -267,8 +272,8 @@ public class Gagyi3
 				</imageobject>
 			</mediaobject>
 		</informalfigure>
-	<para> Yoda feltételt használva viszont nem kapunk hibát, mert az equals() metódus kaphat null
-			referenciát értékként. </para>
+	<para> Yoda feltételt használva viszont nem kapunk hibát, mert az equals() metódus hasonlítandó
+			paramétere viszont lehet null érték.  </para>
 	<programlisting>
 	public class Yoda{
 		public static void main(String[] args) {
@@ -297,7 +302,7 @@ public class Gagyi3
 	<section>
 	<title>Kódolás from scratch</title>
 	<para>Megoldás forrása:
-		<link xlink:href="https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/apbs02.html#pi_jegyei">https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/apbs02.html#pi_jegyei</link>		
+		<link xlink:href="https://www.tankonyvtar.hu/hu/tartalom/tkt/javat-tanitok-javat/apbs02.html#pi_jegyei">Javát tanítok könyv forrásai</link>		
 	</para>
 		<para>Tanulások, tapasztalatok, magyarázat...</para>
 		<para>A Bailey-Borwein-Plouffe (BBP) algoritmus a Pi hexadecimális értékeinek kiszámolására
