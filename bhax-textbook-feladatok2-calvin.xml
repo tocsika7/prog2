@@ -1,0 +1,103 @@
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xml:lang="hu">
+    <info>
+        <title>Helló,Calvin!</title>
+        <keywordset>
+            <keyword/>
+        </keywordset>
+    </info>
+
+    <section>
+        <title>MNIST </title>
+        <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/calvin">TensorFlow GitLab</link> </para>
+		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+        <para>A feladat az volt, hogy próbáljuk ki az MNIST-et, illetve készítsünk hozzá egy saját
+            8-ast tesztelésre. A MNIST egy olyan program ami adatbázisból való tanítás után
+            felismeri a kézzel írott egyjegyű számokat.  A programohoz Python-t és az ehhez
+            szükséges Tensorflow library-t használjuk. A Tensorflow az adatfolyam programozáshoz
+            kínál nekünk lehetőségket. Az adatfolyam programozásban az egyes prgoramrészeket, mint
+            irányított gráfok értelmezzük és ezek között pedig adatfolyamok áramlanak. </para>
+        <para>A programban dekalrálunk egy függvényt a saját 8-ast ábrázoló képünk beolvasására. A
+            file változóba a read_file() függgvénnyel olvassuk be a képet, majd a decode_png()
+            függvénnyel, ezt dekódoljuk unit8-as vagy 16-os
+            tensorrá.<programlisting>def readimg():
+    file = tf.io.read_file("sajat8a.png")
+    img = tf.image.decode_png(file,channels=1)
+    return img</programlisting>
+            A main függvényben beolvassuk az MNIST adabázis képeit majd létrehozunk egy modellt. A
+            modellben az x egy placeholder, ami segítségével gráfot hozhatunk létre. A W és b
+            Variable-ként vannak deklarálva, ami itt olyan tensorokat jelent amive műveleteket
+            végezhezünk a futás során. Fontos megemlíteni, hogy a b a biast tartalmazza. Az y-ban
+            vesszük az a és W mátrixszorzatát a matmul() függvény segítségével, itt a súlyokat
+            állítjuk be, de ehhez még hozzá kell adni a biast tehát a
+            b-t.<programlisting>mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+
+  # Create the model
+  x = tf.placeholder(tf.float32, [None, 784])
+  W = tf.Variable(tf.zeros([784, 10]))
+  b = tf.Variable(tf.zeros([10]))
+  y = tf.matmul(x, W) + b</programlisting>
+            A cross_entropy-t a tartalmazza a y logits és y labels közötti cross entropy-t amit a
+            reduce_mean() függvénnyel átlagolunk. Tanításnál ezt az átlagot próbáljuk minimalizálni
+            a gradient descent algoritmus segítségével. Ez a programban a
+            train.GradientDescentOptimizer.minimize() függvényként jelenik
+            meg.<programlisting>  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y,labels=y_))
+  train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)</programlisting>
+            Ezután elkezdjük a tanítást az MNIST képeivel, majd teszteljük az adatázis 42. elemére
+            ami egy 4-es, illetve a saját kezűleg rajzolt 8-asra is. </para>
+        <figure>
+            <title>A program sikeresen felismeri a saját 8-ast</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/mnist.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+    </section>        
+
+
+
+
+	<section>
+	<title>TensorFlow objektum detektáló</title>
+	    <para>Megoldás forrása:  <link xlink:href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/android">TensorFlow GitHub</link>
+        </para>
+		<para>Tanulságok, tapasztalatok, magyarázat: </para>
+        <para>A feladat az volt, hogy próbáljuk a ki a TensorFlow objektum detektáló appját
+            androidra. Ehhez először le kell klónozni a TensorFlow android-os <link xlink:href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/android">repóját</link> . Majd Android
+            Studioba beimportálni és ott build-elni belőle egy .apk fájlt amit aztán telepíthetünk
+            az Androidos telefonra. Ha nem szeretnénk magunknak build-elni van lehetőség már kész
+            appot is letölteni. A program viszonylag jól működött állatokat, informatikai eszközöket
+            gond nélkül felismert. </para>
+        <para>Kipróbálva: </para>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/od_1.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/od_2.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/od_3.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/od_4.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
+	</section>       
+        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+</chapter>                
