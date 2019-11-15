@@ -8,11 +8,11 @@
 
     <section>
         <title>FUTURE tevékenység editor </title>
-		<para>Megoldás forrása:</para>
+        <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/!/ActivityEditor.java">GitLab</link></para>
 		<para>Tanulságok, tapasztalatok, magyarázat: </para>
         <para>A feladat az volt, hogy a FUTURE Activity Editorban keressünk bugokat és javítsuk őket
-            ki. Az ActivityEditor futtatásánál fontos megemlíteni, hogy csak Java 8 felett nem fut,
-            és olyan verzió kell, ami tartalmazza a JavaFX -et. Több verziót is megpróbáltam a
+            ki. Az ActivityEditor futtatásánál fontos megemlíteni, hogy Java 8 felett nem fut, és
+            olyan verzió kell, ami tartalmazza a JavaFX -et. Több verziót is megpróbáltam a
             8.0.202-zulufx-el futott hiba nélkül. </para>
         <para>Ezt a verziót könnyedén telepíthetjük sdkman segítségével: </para>
         <para>
@@ -20,7 +20,7 @@
 sdk use java 8.0.202-zulufx</programlisting>
         </para>
         <para>A bug, amit találtam az volt, hogy ha egy tevékenységben létrehozunk egy újt
-            altevékenyésget,akkor azután már nem lehetett másikat létrehozni. Ennek az az oka, hogy
+            altevékenységet,akkor azután már nem lehetett másikat létrehozni. Ennek az az oka, hogy
             ilyenkor könyvtárszerkezetet hozunk létre, és két ugyanolyan nevű mappa keletkezne. </para>
         <figure>
             <title>A bug</title>
@@ -31,12 +31,12 @@ sdk use java 8.0.202-zulufx</programlisting>
             </mediaobject>
             <para>Ezt a következőképpen javítjuk ki a kódban: Deklarálunk egy i ciklusváltozót, és
                 egy végtelen while ciklusba tesszük az Új altevékenység létrehozásának
-                programrészét.Létrehouunk a könyvtárban egy Új Altevékenységed a nevében a while
-                aktuális indexével.  Az if részben azt nézzük meg létezik-e a könyvtárban már, az
-                altevékenység amit készülünk létrehozni, ha nem break-e megállítjuk a ciklust,
-                minden további nélkül létrehozhatjuk az új Altevékenységet. Ha már van ilyen nevű
-                mappa, akkor növelnünk kell a tevékenység indexét tehát a ciklusváltozót. Majd
-                kiírjuk hogy nem sikerült létrehozni a fájlt és újat próbálunk létrehozni. Ezt
+                programrészét.Létrehozunk a könyvtárban egy Új Altevékenységet, a nevében a while
+                aktuális indexével. Az if részben azt nézzük meg, hogy létezik-e a könyvtárban már,
+                az altevékenység amit készülünk létrehozni. Ha nem, akkor break-el megállítjuk a
+                ciklust és minden további nélkül létrehozhatjuk az új Altevékenységet. Ha már van
+                ilyen nevű mappa, akkor növelnünk kell a tevékenység indexét tehát a ciklusváltozót.
+                Majd kiírjuk hogy nem sikerült létrehozni a fájlt és újat próbálunk létrehozni. Ezt
                 követően a while ismét lefut növelt i-vel. A működés hátránya lehet hogy ahány
                 altevékenység létezik már alapból,annyiszor fog lefutni a while, amíg újat tud
                 létrehozni.
@@ -73,21 +73,21 @@ sdk use java 8.0.202-zulufx</programlisting>
 
 	<section>
 	<title>SamuCam</title>
-	<para>Megoldás forrása: </para>
+	    <para>Megoldás forrása: <link xlink:href="https://github.com/nbatfai/SamuCam">Bátfai Norbert GitHub</link> </para>
 		<para>Tanulságok, tapasztalatok, magyarázat: </para>
-        <para>A feladat az volt, hogy mutasszuk be a webkamera kezelését a programnak. </para>
+        <para>A feladat az volt, hogy mutassuk be a webkamera kezelését a SamuCam programnak. </para>
         <para>A <emphasis role="bold">main.cpp</emphasis>-ben, itt a webcamipOption parancssori
-            argumentumként lesz megadva, ennek kelle tartalmaznia a webcam IP-jét, erre akkor van
-            szükség, ha androidos telefon használunk. Ha nem adjuk meg az argumentumot akkor, az
-            alapéréték kerül megadásra.
+            argumentumként lesz megadva, ennek kell tartalmaznia a webcam IP-jét, erre akkor van
+            szükség, ha androidos telefon webkamerját használjuk. Ha nem adjuk meg az argumentumot
+            akkor, az alapéréték kerül megadásra.
             <programlisting>std::string videoStream = parser.value ( webcamipOption ).toStdString();
 SamuLife samulife ( videoStream, 176, 144 ); //( 34, 16 );</programlisting></para>
         <para>A további kódcsipetek, mind a<emphasis role="bold"> SamuCam.cpp</emphasis>-ben
             találhatóak. Ebben a részletben láthatjuk, hogy a SamuCam konstruktor tartalmaz egy
             openVideoStream() függvényt, amit rögtön utána ki is fejtünk. A videoCaptureOpen(0)
             függvénnyel nyitjuk meg a streamet, itt a paramétert átírtam 0-ra mivel így
-            automatikusan a webcamot fogja megnyitni. A .set függvényekkel beállítjuk a videó
-            magasságát, szélességét illetve az FPS-t.  </para>
+            automatikusan az alapértelmezett webcamot fogja megnyitni. A .set függvényekkel
+            beállítjuk a videó magasságát, szélességét illetve az FPS-t. </para>
         <para>
             <programlisting>SamuCam::SamuCam ( std::string videoStream, int width = 176, int height = 144 )
   : videoStream ( videoStream ), width ( width ), height ( height )
@@ -124,7 +124,7 @@ void SamuCam::openVideoStream()
       qDebug() &lt;&lt; "error: cannot found" &lt;&lt; faceXML.c_str();
       return;
     }</programlisting>
-        <para>Egy while függvényt használunk, amiben a read függvénnyel fogujuk ovlasni a bemenetet,
+        <para>Egy while függvényt használunk, amiben a read függvénnyel fogujuk olvasni a bemenetet,
             a programrész végén található msleep(80) függvénnyel 80 millisecet késleltetjük a
             while-t így ilyen időközönként fogjuk olvasni a bemenetet. Ezt a frame tömbbe fogjuk
             tárolni, ami egy többdimenziós tömb. Ha látjuk, hogy van bemenet tehát a frame tömb nem
@@ -186,8 +186,6 @@ void SamuCam::openVideoStream()
           QThread::msleep ( 80 );
 
         }</programlisting>
-        <para>A programot sikeresen futtattam, de sajnos a virtuális gépen nem sikerült működésre
-            bírni a webkamerát ezért nem sikerült kipróbálni. </para>
         <informalfigure>
             <mediaobject>
                 <imageobject>
@@ -198,15 +196,15 @@ void SamuCam::openVideoStream()
 	</section>  
 
 	<section>
-	<title>BrainB Slot-signal mechanizmus </title>
-        <para> Megoldás forrása:  </para>
+	    <title>BrainB Slot-signal mechanizmus   </title>
+	    <para> Megoldás forrása:<link xlink:href="https://github.com/nbatfai/esport-talent-search">Bátfai Norbert GitHub</link>   </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
         </para>
         <para><emphasis role="bold">Slot-signal mechanizmus általánosan:</emphasis></para>
-        <para>A QT slot-signal mechanizmus az objektumok közötti kommunikációt teszi lehet. Más GUI
-            rendszerekben az objektumok közötii kommunikáció úgynevezett callback-ekkel történik,
-            ami függvénypointerek által műkdödik. </para>
+        <para>A QT slot-signal mechanizmus az objektumok közötti kommunikációt teszi egyszeűbbé. Más
+            GUI rendszerekben az objektumok közötti kommunikáció úgynevezett callback-ekkel
+            történik, ami függvénypointerek által műkdödik. </para>
         <para>A QT-ban bevezették az Signal-slot mechanizmust, a callback-ek alternatívájára. A slot
             egy függvény, ami akkor hívódik meg ha kap signalt. A callback-ekhez képest nagy
             előnyük, hogy típus biztonságosak. A signal és slot típusának meg kell egyeznie, ha nem
@@ -216,7 +214,7 @@ void SamuCam::openVideoStream()
         <para><emphasis role="bold">BrainB példák: </emphasis></para>
         <para>A <emphasis role="bold">BrainWin</emphasis>.cpp-ben ezt a mechaniztmust használjuk a
             Hero-k frissítésére, ileltve a Statok lekérésére. Láthatjuk hogy a Signal tartalmazza a
-            heroesChanged függvényt, ami ha végbemegy meghívdódik a kapcsolt Slot ami pedig az
+            heroesChanged függvényt, ami ha végbemegy meghívódik a kapcsolt Slot ami pedig az
             updateHeroes függvényt tartalmazza. </para>
         <programlisting>        connect ( brainBThread, SIGNAL ( heroesChanged ( QImage, int, int ) ),
                   this, SLOT ( updateHeroes ( QImage, int, int ) ) );
