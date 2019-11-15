@@ -10,7 +10,7 @@
         <title>Reverse engineering UML osztálydiagram</title>
 		
     	
-        <para><emphasis role="bold"> Megoldás forrása: </emphasis></para>
+        <para><emphasis role="bold"> Megoldás forrása:  - </emphasis></para>
     	
         <para>
 			Tanulságok, tapasztalatok, magyarázat..</para>
@@ -47,7 +47,7 @@
 					<para># : protected</para>
 				</listitem>
 			</itemizedlist></para>
-		<para>A "nyilak: </para>
+		<para>A kapcsolatok:  </para>
 		<para>A a piros rombusz végű nyíl a két osztály közötti kompozíciót jelöli. Ez azt jelenti
 			hogy az adott objektum nem létezik a szülőobjektum nélkül. Ebben az esetben nincs
 			csomópont ha, nincs gyökér. </para>
@@ -62,8 +62,7 @@
 
 	<section>
 	<title>Forward engineering UML osztálydiagram</title>
-	<para>Megoldás forrása:
-		</para>
+	<para>Megoldás forrása: -</para>
 		<para>
 			Tanulságok, tapasztalatok, magyarázat...
 		</para>
@@ -109,9 +108,7 @@
 
 	<section>
 	<title>BPMN</title>
-	<para>Megoldás forrása:
-				
-	</para>
+	<para>Megoldás forrása: -</para>
 		<para>Tanulások, tapasztalatok, magyarázat...</para>
 		<para>A BPMN(Buisness Process Model and Notation)-nel valamilyen üzeleti folyamatot tudunk
 			megjeleníteni grafikus ábrázolással. </para>
@@ -126,17 +123,17 @@
 			</mediaobject>
 		</informalfigure>
 			<para><emphasis role="bold">Magyarázat:</emphasis></para>
-			<para>A zöld körök a kezdő, a pirosak a végeseményt jelzik, míg a négyzetek az
-				elvégzendő feladatokat. A nyilak az események a végrehajtásának a sorrendjét
-				jelölik, ha szaggatottak akkor több fél a résztvevő. A rombusszal azt jelezzük, hogy
-				kétféle lehetőség van a továbbhaladásra. </para>
-			<para>A konkért példában először szükségünk van egy termékre ez a kezdő folyamat. Majd
-				kiválasztjuk és kosárba tesszük a terméket, megadjuk a szállítási adatokat. Ezután
-				lehetőség van előre fizetni bankkártyával, majd megrendeljük a terméket. Ez a cégnél
-				is beindítja a folyamatotokat rögzítik a rendelést majd átadják a csomagot a
-				futárnak. Ez beindítja a futár folyamatait átveszi, kiszállítja, majd átadja a
-				csomagot és véget ér a folyamat. A vevő, ha szükséges fizet, átveszi a csomagját,
-				majd az ő folyamtai és véget érnek. </para>
+			<para>A zöld körök a kezdő, a pirosak a végereményt jelzik, míg a négyzetek az elvégzendő
+			feladatokat. A nyilak az események a végrehajtásának a sorrendjét jelölik, ha ezek
+			szaggatottak, akkor több fél a résztvevő. A rombusszal azt jelezzük, hogy kétféle
+			lehetőség van a továbbhaladásra. </para>
+			<para>A konkért példában először szükségünk van egy termékre, ez a kezdő folyamat. Majd
+			kiválasztjuk és kosárba tesszük a terméket, megadjuk a szállítási adatokat. Ezután
+			lehetőség van előre fizetni bankkártyával, majd megrendeljük a terméket. Ez a cégnél is
+			beindítja a folyamatotokat rögzítik a rendelést majd átadják a csomagot a futárnak. Ez
+			beindítja a futár folyamatait átveszi, kiszállítja, majd átadja a csomagot és véget ér a
+			folyamat. A vevő, ha szükséges fizet, átveszi a csomagját, majd az ő folyamtai és véget
+			érnek. </para>
 		
 		
 		
