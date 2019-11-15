@@ -9,23 +9,25 @@
 
     <section>
         <title>JDK Osztályok</title>
-        <para>Megoldás forrás: </para>
+        <para>Megoldás forrás: <link
+            xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Stroustrup/jdk_classes.cpp"
+            >GitLab</link></para>
         <para>Tanulságok, tapasztalatok, magyarázat...</para>
         <para>A feladat az volt, hogy készítsünk olyan Boost C++ programot, ami megszámolja a JDK
             összes osztályát. </para>
         <para>A Boost olyan C++ könyvtárakat tartalmaz, amik támogatást nyújtanak pélául a lináris
-            algebrához, többszálas programozásho és unit testinghez.  </para>
-        <para>Az osztályok számolására készült kódrsézt egy read_file() függvénybe írjuk. Ennek a
+            algebrához, többszálas programozáshoz és unit testinghez. </para>
+        <para>Az osztályok számolására készült kódrészt egy read_file() függvénybe írjuk. Ennek a
             két paramétere egy path objektum, és a egy számláló változó, ami az osztályok számát
             tárolja. A path osztály a Boost-ban az elérési utak tárolására és feldolgozására lett
             kitalálva. Ezek az útvonalak stringként vannak inicializálva, amit átadunk a path
             konstruktornak. </para>
         <para>Egy if kifejezessel megnézzük, hogy a megadott úton lévő file regular file-e. Ha igen
-            létrehozunk egy stringet, ami tartalmazza azt, hogy pont java, tehát a kiterjesztést,
-            amit keresünk. Ezt a compare függvénnyel összehasonlítjuk az útvonal fájljának
+            létrehozunk egy stringet, ami tartalmazza azt, hogy .java, tehát a kiterjesztést, amit
+            keresünk. Ezt a compare függvénnyel összehasonlítjuk az útvonal fájljának
             kiterjesztésével. Az útvonalból a path.string() függvénnyel stringet készítünk. Majd a
             find_last_of() függvénnyel megkeressük hol van benne a legutolsó "/" karakter, és innen
-            készítünk belőle egy substringet majd növeljük a számlálót.  </para>
+            készítünk belőle egy substringet majd növeljük a számlálót. </para>
         <para>Az else ágban azt nézzük meg, hogy a megadott útvonal könyvtár-e. Ha igen, egy for
             ciklussal végigmegyünk rajta, ehhez a Boost directory_iterator() függvényét használjuk.
             Itt már csak rekurzívan meghívjuk az előző ágban elkészített függvényt. Így a függvény
@@ -101,15 +103,17 @@ int main( int argc, char *argv[])
     <section>
         <title>Másoló-mozgató szemantika és Összegzés</title>
         <para> Megoldás forrása: </para>
+        <para> <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Stroustrup/copy.cpp">GitLab Másoló konstruktor</link></para>
+        <para> <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/Stroustrup/move2.cpp">GitLab Mozgató konstruktor</link></para>
         <para> Tanulságok, tapasztalatok, magyarázat...</para>
         <para>A feladat az volt, hogy kódcsipeteken keresztül vessük össze a C++ 11 mozgató és
             másoló szemantikáját. </para>
-        <para>A két szemantika személtetésére egy egyszerű String osztályt alkalmaztam. Tartalmaz egy
-            char*-okat tartalmazó tömböt ami a buffer, illetve egy m_Size változót, ami ennek a
+        <para>A két szemantika személtetésére egy egyszerű String osztályt alkalmaztam. Tartalmaz
+            egy char*-okat tartalmazó tömböt ami a buffer, illetve egy m_Size változót, ami ennek a
             méretét adja meg. A konstruktorban meghatározzuk a string hosszát strlen() függvénnyel,
-            majd ennek megfelelően hozununk létre memóriafoglalást a tömb számára. Memcpy()
+            majd ennek megfelelően hozunk létre memóriafoglalást a tömb számára. Memcpy()
             függvénnyel másoljuk be a Bufferbe a stringet.Ez a függvény a magadott területre másolja
-            a megadott forrást a másolókonstruktorban is ezt a függvényt fogjuk használni.  A
+            a megadott forrást, a másolókonstruktorban is ezt a függvényt fogjuk használni. A
             destruktorban egyszerűen kitöröljük a buffert. A kiiratásra az ostream operator
             túlterhelését alkalmazzuk, amit friend-ként deklarálunk hogy a privát tagokhoz is
             hozzáférhessen.</para>
@@ -220,8 +224,8 @@ int main(){
             referenciával magadott típusú változóból egy ideiglenes objektum. Ez a
             mozgatókonstruktorban ugye a String-ként szerepel. Itt egyszerűen megteszzük azt, hogy
             lemásoljuk az adott objektum pointerét, ezesetben a buffert. Majd a régit pedig
-            egyszerűen nullptr-re állítjuk. Ezt azért tehetjük meg, mert a kliens nem érzékeli, hogy
-            módosítás történt, erre csa akkor van lehetőség ha a rvalue referenciát kap a
+            egyszerűen nullptr-re állítjuk. Ezt azért tehetjük meg, mert a fordító nem érzékeli,
+            hogy módosítás történt, erre csa akkor van lehetőség ha a rvalue referenciát kap a
             konstruktor paraméterként. Ilyenkora konstrkutoron belül "akármit" megtehetünk, ameddig
             az szementikának érvényes. </para>
         <para>
