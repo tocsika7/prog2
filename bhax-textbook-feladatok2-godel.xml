@@ -127,10 +127,18 @@
             Comparable&lt;T> interfész által létrehozott rendezés, tehát a sort() a Comparable
             interfészt egészíti ki, ezért kell nekünk is implementálni.  </para>
         <figure>
-            <title>sort metódus JDK leírás</title>
+            <title>sort metódus Dokementáció leírás</title>
             <mediaobject>
                 <imageobject>
                     <imagedata fileref="Images/sort_jdk.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <figure>
+            <title>A JDK forrás:</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/jdk.png"/>
                 </imageobject>
             </mediaobject>
         </figure>
