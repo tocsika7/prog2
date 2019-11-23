@@ -23,27 +23,43 @@
     file = tf.io.read_file("sajat8a.png")
     img = tf.image.decode_png(file,channels=1)
     return img</programlisting>
-            A main függvényben beolvassuk az MNIST adabázis képeit majd létrehozunk egy modellt. A
-            modellben az x egy placeholder, ami segítségével gráfot hozhatunk létre. A W és b
-            Variable-ként vannak deklarálva, ami itt olyan tensorokat jelent amive műveleteket
-            végezhezünk a futás során. Fontos megemlíteni, hogy a b a biast tartalmazza. Az y-ban
-            vesszük az a és W mátrixszorzatát a matmul() függvény segítségével, itt a súlyokat
-            állítjuk be, de ehhez még hozzá kell adni a biast tehát a
-            b-t.<programlisting>mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+            A main függvényben beolvassuk az MNIST adabázis képeit majd létrehozunk egy modellt.A
+            modell tensor-okból áll amik, olyan adatszerkezetek, amik (ebben az esetben) mátrixokat
+            tartalmaznak. A modellben az x egy Placeholder típusú tensor, ami akkor fog értéket
+            kapni, mielőtt a kód lefut. Ezután jön két változó típusú tensor, a W tartalmazza a
+            súlyokat, a b pedig a bias-t, tehát a hibás következetéseket. Az y ban vesszük az x és W
+            tensor mátrixszorzatát a matmul() függvénnyel,  majd ehhez hozzáadjuk a b-t.
+            <programlisting>mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784])
   W = tf.Variable(tf.zeros([784, 10]))
   b = tf.Variable(tf.zeros([10]))
   y = tf.matmul(x, W) + b</programlisting>
-            A cross_entropy-t a tartalmazza a y logits és y labels közötti cross entropy-t amit a
-            reduce_mean() függvénnyel átlagolunk. Tanításnál ezt az átlagot próbáljuk minimalizálni
-            a gradient descent algoritmus segítségével. Ez a programban a
-            train.GradientDescentOptimizer.minimize() függvényként jelenik
+            A cross_entropy-ban vesszük a y logits-ok és y label-ök közötti keresztszorzatot, majd
+            ennek a tensor-nak az elemeinek számoljuk ki a dimenziók közötti átlagát a reduce_mean()
+            függvénnyel. Tanításnál ezt az átlagot próbáljuk minimalizálni a gradient descent
+            algoritmus segítségével. Ez a programban a train.GradientDescentOptimizer.minimize()
+            függvényként jelenik
             meg.<programlisting>  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y,labels=y_))
   train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)</programlisting>
-            Ezután elkezdjük a tanítást az MNIST képeivel, majd teszteljük az adatázis 42. elemére
-            ami egy 4-es, illetve a saját kezűleg rajzolt 8-asra is. </para>
+            Ezután elkezdjük a tanítást az MNIST képeivel egyszerre 100-at fog feldolgozni, és ezt a
+            lépést ismételjük meg 1000-szer, és kiírjük hány százaléknál jár a tanítás.
+            <programlisting>  for i in range(1000):
+    batch_xs, batch_ys = mnist.train.next_batch(100)
+    sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
+    if i % 100 == 0:
+      print(i/10, "%")</programlisting>Végül
+            teszteljük az adatázis 42. elemére ami egy 4-es, illetve a saját kezűleg rajzolt 8-asra
+            is. </para>
+        <para>A progpater-es forrás működéséhez néhány függvényt át kellett írni, mert depraceted-ek
+            voltak. </para>
+        <para>A kép dekódolásánál meg kellett adni egy channels=1 argumentumot, ez a színcsatornák
+            számát adja meg. Az érték 1 mert a kép szürkeárnyalatos.
+            <programlisting>img = tf.image.decode_png(file,channels=1)</programlisting></para>
+        <para>A keresztszorzat létrehozásánál pedig a softmax_cross_entropy_with_logits függvénynél
+            argmuntumként meg kellett adni a logits és labels értékeket.
+            <programlisting>cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y,labels=y_))</programlisting></para>
         <figure>
             <title>A program sikeresen felismeri a saját 8-ast</title>
             <mediaobject>
@@ -63,11 +79,20 @@
         </para>
 		<para>Tanulságok, tapasztalatok, magyarázat: </para>
         <para>A feladat az volt, hogy próbáljuk a ki a TensorFlow objektum detektáló appját
-            androidra. Ehhez először le kell klónozni a TensorFlow android-os <link xlink:href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/android">repóját</link> . Majd Android
-            Studioba beimportálni és ott build-elni belőle egy .apk fájlt amit aztán telepíthetünk
-            az Androidos telefonra. Ha nem szeretnénk magunknak build-elni van lehetőség már kész
-            appot is letölteni. A program viszonylag jól működött állatokat, informatikai eszközöket
-            gond nélkül felismert. </para>
+            androidra. Ehhez először le kell klónozni a TensorFlow android-os repóját a következő linkről: <link
+                xlink:href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/android"
+                >https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/android</link>.
+        </para>
+            <para>Majd Android Studioba beimportálni és ott build-elni belőle egy .apk fájlt amit
+            aztán telepíthetünk az Androidos telefonra.Ehhez a  build.gradel fájlban a
+            nativeBuildSystem-et át kell írnunk 'bazel'-ről 'none'-ra. Illetve a gradle/wrapper
+            mappán belül a gradle-wrapper.properties fájlban a distributionUrl értéket át kell
+            írnunk egy újabb verziójúra, minimum 4.10-esre. pl.: <link
+                xlink:href="https://services.gradle.org/distributions/gradle-4.10.1-all.zip"
+                >https://services.gradle.org/distributions/gradle-4.10.1-all.zip</link> </para>
+        <para>Ha nem szeretnénk magunknak build-elni van lehetőség már kész appot is letölteni. A
+            program viszonylag jól működött állatokat, informatikai eszközöket gond nélkül
+            felismert. </para>
         <para>Kipróbálva: </para>
         <informalfigure>
             <mediaobject>
