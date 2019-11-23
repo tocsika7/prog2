@@ -65,173 +65,95 @@
         <para> Tanulságok, tapasztalatok, magyarázat...</para>
         <para>A feladat az, volt hogy lexer használata nélkül írjunk egy programot ami átkonvertálja
             a kapott szövegett leet szöveggé. </para>
-        <para>A leet osztály tartalmaz egy input stringet, ami tartalmazza a bekért szöveget,
-            illetve egy output string vektort, ami a konvertált szöveget tartalmazza. </para>
-        <para>A konvertálás a cipher függvényben zajlik. Itt az output vektoron referencia szerinti
-            átadást alkalmazunk hogy a későbbiekben visszakaphassuk a megváltozott értékét.
-            Transfrom() és toupper() metódusokkal a bekért stringet nagybetűvé konvertáljuk, hogy ne
-            kelljen különbséget tenni a kis- és nagybetű között. </para>
-        <para>Ezután végimegyünk az input string minden karakterén és a karakternek mefelelő leet
-            karaktert töltünk az output vektorba. A konstruktorban futtattjuk a cipher függvényt,
-            itt látható, hogy az output vector referenciával van megadva. </para>
-        <para>A main()-ben deklaráljuk az input stringet és az output vektort, illetve egy quit
-            striget és egy quit_b bool-t. Ezekkel a bekérés megszakítását végezzük el. A program
-            addig fut amíg a quit_b bool igaz. Minden konvertálás után megkérdezzük (bekérjük a
-            választ a quit stringre), akar-e még a felhasználó konvertálni. Ha igen a quit_bool
-            igazra állítjuk ha nem kilépünk. Maga a konvertálás rész, pedig a konstruktor
-            meghívásával hajtódik végre. </para>
-        <para>A
-            kód:<programlisting>#include &lt;vector>
-#include &lt;iostream>
+        <para>A feladathoz a karakterek ASCII kódolását használtam alapul. Minden karakter mögött
+            van egy decimális érték, amikor integer-é kényszírtjük őket ezt azt értéket kapjuk. Az
+            angol ABC betűinél ez az érték A-Z-ig 65-99, illetve 0-9 ig a számoknál 48-57. </para>
+        <para>A leet osztályban private részében létrehozunk a leet karaktereket tartalmazó tömböket
+            az angol ABC betűire, illetve a számokra. A cipher függvény bekér egy integer értéket
+            (az adott karakterét) , majd megnézi hogy melyik tartományban van, és eszerint adja
+            vissza leet tömbök egyikéből, azt az értéket amelyik hozzá tartozik. Ezt úgy érjük el
+            hogy a megadott értékből kivonjuk a tartomány kezdő értékét. Például a T betű értéke 84,
+            ekkor ebből kivonjuk a 65-öt és visszadjuk a karaktereket tartalmazó tömb 19. elemét ami
+            a T betűhöz tartazó leet karaktert tartalmazza. </para>
+        <para>Az input és outputot fájlkezeléssel oldjuk meg. A be- és kifile-okat argumentumként
+            kell megadni, ha nem így teszünk leáll a program és kiírja a helyes használatot.
+            Példányosítunk egy leet objektumot. A befile tartalmát beolvassuk egy segéd stringbe.
+            Majd ezt a stringet bemásoljuk egy output char tömbbe a strcpy() függvénnyel. Ezután a
+            kifile-ba karakterenként beírjuk az output tömb elemeit, de előtte meghívjuk rá a cipher
+            függvényt és azért hogy ez sikeresen működjön a toupper() függvénnyel átkonvertáljuk
+            őket nagybetűre majd típuskényszerítjük őket integer-re. </para>
+        <para>A kód:
+            <programlisting>#include &lt;iostream>
+#include &lt;fstream>
 #include &lt;string.h>
 #include &lt;stdio.h>
-#include&lt;bits/stdc++.h> 
 
-using namespace std;
+class leet
+{
+private:
+    std::string leetchars[26]{
+        "4", "8", "&lt;", "[)", "3", "|=", "6", "|-|", "1", "_|", "|&lt;", "|", "|V|", "|\\|", "O",
+        "|>", "0.", "|2", "5", "7", "|_|", "\\/", "\\X/", "}{", "`/", "2"};
 
-class Leet{
-    
+    std::string leetnums[10]{
+        "O", "I", "Z", "E", "A", "S", "G", "T", "B", "g"};
+
 public:
-    string input;
-    vector&lt;string> output;
-    vector&lt;string> cipher(string input, vector&lt;string>* output){
-        
-        transform(input.begin(), input.end(), input.begin(), ::toupper);
-       
-        for(int i=0;i&lt;input.length();i++)
+    std::string cipher(int ch)
+    {
+        if (ch >= 65 &amp;&amp; ch &lt;= 90)
         {
-            switch (input.at(i)) {
-                case 'A' : output->push_back("4");
-                     break;
-                case 'B' : output->push_back("|3");
-                     break;
-                case 'C' : output->push_back("(");
-                     break;
-                case 'D' : output->push_back("|)");
-                     break;
-                case 'E' : output->push_back("3");
-                     break;
-                case 'F' : output->push_back("|=");
-                     break;
-                case 'G' : output->push_back("6");
-                     break;
-                case 'H' : output->push_back("|-|");
-                     break;
-                case 'I' : output->push_back("|");
-                     break;     
-                case 'J' : output->push_back(".]");
-                     break;
-                case 'K' : output->push_back("|&lt;");
-                     break;      
-                case 'L' : output->push_back("1");
-                     break;      
-                case 'M' : output->push_back("|Y|");
-                     break;
-                case 'N' : output->push_back("N");
-                     break;
-                case 'O' : output->push_back("0");
-                     break;
-                 case 'P' : output->push_back("P");
-                     break;
-                case 'Q' : output->push_back("Q");
-                     break;
-                case 'R' : output->push_back("|2");
-                     break;
-                case 'S' : output->push_back("5");
-                     break;
-                case 'T' : output->push_back("7");
-                     break;
-                case 'U' : output->push_back("|_|");
-                     break;                    
-                case 'V' : output->push_back("V");
-                     break;
-                case 'W' : output->push_back("W");
-                     break;                    
-                case 'X' : output->push_back("}{");
-                     break;                     
-                case 'Y' : output->push_back("'/");
-                     break;
-                case 'Z' : output->push_back("2");
-                     break;
-                case ' ' : output->push_back(" ");
-                     break;
-                case '0' : output->push_back("D");
-                     break;
-                case '1' : output->push_back("I");
-                     break;
-                case '2' : output->push_back("Z");
-                     break;
-                case '3' : output->push_back("E");
-                     break;
-                case '4' : output->push_back("A");
-                     break;
-                case '5' : output->push_back("S");
-                     break;
-                case '6' : output->push_back("b");
-                     break;
-                case '7' : output->push_back("T");
-                     break;
-                case '8' : output->push_back("B");
-                     break;
-                case '9' : output->push_back("g");
-                     break;
-            }
-        
-        
+            return leetchars[ch - 65];
         }
-        
-    return *output; 
-    }
-    
-    Leet(string input,vector&lt;string> &amp;output){
-        cipher(input,&amp;output);
-    }
-        
-    
-    };
-    
-    int main(){
-        vector&lt;string> output;
-        string input;
-        string quit;
-        bool quit_b =true;
-        
-        while(quit_b==true){
-            quit_b=false;
-            cout&lt;&lt;"Add meg a szöveget!\n";
-            cin>>input; 
-            
-            cout&lt;&lt;"A szöveg amit megadtál: "&lt;&lt;input&lt;&lt;"\n";
-            
-            Leet test(input,output);
-            cout&lt;&lt;"A leet-es szöveg:\n";
-            for(int i=0;i&lt;output.size();i++){
-                cout&lt;&lt;output.at(i);
-            }
-            cout&lt;&lt;"\n";
-            
-            cout&lt;&lt;"Folytatni akarod?(i/n)?\n";
-            cin>>quit;
-            if(quit=="i"){
-                output.clear();
-                quit_b=true;
-            }
-            else if(quit=="n"){
-                break;
-            }
-        
+        else if (ch >= 48 &amp;&amp; ch &lt;= 57)
+        {
+            return leetnums[ch - 48];
         }
+        else
+        {
+            return std::to_string(ch);
+        }
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    if (argc != 3)
+    {
+        std::cout &lt;&lt; "Használat: ./leet input.txt output.txt \n";
+        return -1;
     }
 
-</programlisting></para>
+    std::ifstream befile(argv[1]);
+    std::ofstream kifile(argv[2]);
+
+    leet l;
+    std::string temp;
+
+    while (!befile.eof())
+    {
+        befile >> temp;
+    }
+
+    char output[temp.length() + 1];
+    strcpy(output, temp.c_str());
+
+    for (int i = 0; i &lt; temp.length(); i++)
+    {
+        kifile &lt;&lt; (l.cipher((int)(toupper(output[i]))));
+    }
+
+    befile.close();
+    kifile.close();
+
+    return 0;
+}</programlisting></para>
         <para>A program futása:</para>
-        <informalfigure>
-            <mediaobject>
+        <para><inlinemediaobject>
                 <imageobject>
-                    <imagedata fileref="Images/my_leet.png"/>
+                    <imagedata fileref="Images/leet.png"/>
                 </imageobject>
-            </mediaobject>
-        </informalfigure>
+            </inlinemediaobject></para>
     </section>    
     
      <section>
@@ -331,4 +253,3 @@ teljesKépernyősMód(graphicsDevice);</programlisting>
     </section>
     
 </chapter>                
-<?oxy_options track_changes="on"?>
