@@ -8,7 +8,7 @@
 
     <section>
         <title>MNIST </title>
-        <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/calvin">TensorFlow GitLab</link> </para>
+        <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/tree/master/calvin/mnist.py">GitLab</link> </para>
 		<para>Tanulságok, tapasztalatok, magyarázat: </para>
         <para>A feladat az volt, hogy próbáljuk ki az MNIST-et, illetve készítsünk hozzá egy saját
             8-ast tesztelésre. A MNIST egy olyan program ami adatbázisból való tanítás után
@@ -28,7 +28,7 @@
             tartalmaznak. A modellben az x egy Placeholder típusú tensor, ami akkor fog értéket
             kapni, mielőtt a kód lefut. Ezután jön két változó típusú tensor, a W tartalmazza a
             súlyokat, a b pedig a bias-t, tehát a hibás következetéseket. Az y ban vesszük az x és W
-            tensor mátrixszorzatát a matmul() függvénnyel,  majd ehhez hozzáadjuk a b-t.
+            tensor mátrixszorzatát a matmul() függvénnyel, majd ehhez hozzáadjuk a b-t.
             <programlisting>mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
 
   # Create the model
@@ -44,7 +44,7 @@
             meg.<programlisting>  cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=y,labels=y_))
   train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)</programlisting>
             Ezután elkezdjük a tanítást az MNIST képeivel egyszerre 100-at fog feldolgozni, és ezt a
-            lépést ismételjük meg 1000-szer, és kiírjük hány százaléknál jár a tanítás.
+            lépést ismételjük meg 10-szer, és kiírjük hány százaléknál jár a tanítás.
             <programlisting>  for i in range(1000):
     batch_xs, batch_ys = mnist.train.next_batch(100)
     sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
@@ -68,6 +68,92 @@
                 </imageobject>
             </mediaobject>
         </figure>
+    </section>
+    <section>
+        <title>Deep MNIST</title>
+        <para>Megoldás forrása: <link xlink:href="https://gitlab.com/tocsika7/prog2_forrasok/blob/master/calvin/deep.py">GitLab</link> </para>
+        <para>Tanulságok, tapasztalatok, magyarázat:</para>
+        <para>A feladat az volt, hogy futtassuk le az MNIST mély verzióját és ismertessük fel vele a
+            saját kézzel írott számunkat. </para>
+        <para>A feladatban Rácz András tutoriált. </para>
+        <para>Ahhoz, hogy a program az új TensorFlow-val is műkdöjön ki kell cserélnünk a legtöbb
+            függvény előtagját tf.compat.v1.-re, mivel ezek az új verzióban ebbe a modulba kerültek. </para>
+        <para>Ahhoz, hogy saját képet is felismerjen bele kellett írni az előző feladatban használt
+            readimg() függvényt, ami be fogja olvasni a saját képunket.
+            <programlisting>def readimg():
+  file = tf.compat.v1.read_file("sajat8a.png")
+  img = tf.image.decode_png(file, 1)
+  return img</programlisting></para>
+        <para>Az alábbi függvénnyel pedig a beolvasott képet fogjuk átkonvertálni 28*28-as méretűre
+            és grayscale-re. Ez a paramatérekben is látszik az utolsó paraméter 1 amiért a képünk
+            grayscale, ha RGB színterű lenne akkor 3-at kéne megadni.
+            <programlisting>with tf.name_scope('reshape'):
+    x_image = tf.reshape(x, [-1, 28, 28, 1])</programlisting></para>
+        <para>Létrehozzuk a súlyokat és a biast tartalmazó Tensorokat, az első rétegben itt a
+            képünkből 32 képet készít a
+            program.<programlisting>  with tf.name_scope('conv1'):
+    W_conv1 = weight_variable([5, 5, 1, 32])
+    b_conv1 = bias_variable([32])
+    h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)</programlisting></para>
+        <para>A második rétegben 32 képre még helyezünk 64 filtert ami által kapunk egy 32x64 képet. </para>
+        <para>Ezek után fog átmenni két teljesen kapcsolt rétegen ahol a súlyokat és biast
+            beállítjuk, majd ezután történik a klasszifikáció tehát felismeri a képet. </para>
+        <para>Az első feladat példájához hasonlóan is  beolvassuk a mintaképeket, majd létehozunk
+            egy modellt. Létrehozunk egy keresztszorzatot a logits és labels elemek között, majd
+            ezeknek az átalgát vesszük. Az optimalizálás során most az Adam algoritmust használjuk a
+            GradientDescent helyett.
+            <programlisting>  # Import data
+  tf.compat.v1.disable_eager_execution()
+  mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
+
+  # Create the model
+  x = tf.compat.v1.placeholder(tf.float32, [None, 784])
+
+  # Define loss and optimizer
+  y_ = tf.compat.v1.placeholder(tf.float32, [None, 10])
+
+  # Build the graph for the deep net
+  y_conv, keep_prob = deepnn(x)
+
+  with tf.name_scope('loss'):
+    cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=y_,
+                                                            logits=y_conv)
+  cross_entropy = tf.reduce_mean(cross_entropy)
+
+  with tf.name_scope('adam_optimizer'):
+    train_step = tf.compat.v1.train.AdamOptimizer(1e-4).minimize(cross_entropy)</programlisting></para>
+        <para>Ezt követi a tanítás. A tanítás során 20000 mintaképet használunk és ezeket 50-essével
+            olvassuk be. Illetve 100 képenként kiírjuk hány képet olvassot már be a program és hány
+            százalékos a pontosság. Ez a verzió a sima MNIST-nél 20-szor több mintával dolgozik,
+            ezért sokkal pontosabb de a tanítás is jóval több időt igényel. Az én esetemben ez
+            körülbelül 20-25 perc volt.
+            <programlisting>  with tf.compat.v1.Session() as sess:
+    sess.run(tf.compat.v1.global_variables_initializer())
+    for i in range(20000):
+      batch = mnist.train.next_batch(50)
+      if i % 100 == 0:
+        train_accuracy = accuracy.eval(feed_dict={
+            x: batch[0], y_: batch[1], keep_prob: 1.0})
+        print('step %d, training accuracy %g' % (i, train_accuracy))
+      train_step.run(feed_dict={x: batch[0], y_: batch[1], keep_prob: 0.5})
+
+    print('test accuracy %g' % accuracy.eval(feed_dict={
+        x: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))</programlisting></para>
+        <figure>
+            <title>A program sikeresen felismerte a saját 8-ast</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/dmnist1.png"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <informalfigure>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="Images/dmnist2.png"/>
+                </imageobject>
+            </mediaobject>
+        </informalfigure>
     </section>        
 
 
